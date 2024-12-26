@@ -40,7 +40,7 @@ export default function DashboardHeader() {
         </nav>
         <div className="flex items-center space-x-4">
           <ThemeToggle />
-          <Link href="/notifications">
+          <Link href="/notify">
             <Button variant="ghost" size="icon">
               <Bell className="h-5 w-5" />
               <span className="sr-only">Notifications</span>

@@ -17,6 +17,12 @@ const teams = [
   { id: 4, name: 'Color Harmony', members: 6, projects: 10 },
   { id: 5, name: 'Digital Dreamers', members: 4, projects: 7 },
   { id: 6, name: 'Brush Masters', members: 3, projects: 9 },
+  { id: 2, name: 'Creative Minds', members: 3, projects: 8 },
+  { id: 3, name: 'Pixel Perfectors', members: 4, projects: 15 },
+  { id: 4, name: 'Color Harmony', members: 6, projects: 10 },
+  { id: 2, name: 'Creative Minds', members: 3, projects: 8 },
+  { id: 3, name: 'Pixel Perfectors', members: 4, projects: 15 },
+  { id: 4, name: 'Color Harmony', members: 6, projects: 10 },
 ]
 
 export default function TeamOverview() {
@@ -25,13 +31,13 @@ export default function TeamOverview() {
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null)
 
   return (
-    <Card>
+    <Card className='h-[470px]'>
       <CardHeader>
         <CardTitle>Your Teams</CardTitle>
         <CardDescription>Teams you're currently a part of</CardDescription>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[300px] pr-4">
+        <ScrollArea className="h-[350px] pr-4">
           <div className="space-y-4">
             {teams.map((team) => (
               <div key={team.id} className="flex items-center justify-between">

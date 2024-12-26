@@ -20,7 +20,7 @@ export default function TeamInvitations() {
         <CardDescription>Pending invitations to join teams</CardDescription>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[300px] pr-4">
+        <ScrollArea className="h-[173px] pr-4">
           <div className="space-y-4">
             {invitations.map((invitation) => (
               <div key={invitation.id} className="flex items-center justify-between">
