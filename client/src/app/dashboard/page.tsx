@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
-import DashboardHeader from '@/components/dashboardHeader'
-import ProjectsOverview from '@/components/projectsOverview'
-import ActivityFeed from '@/components/activityFeed'
+import DashboardHeader from '@/components/dashboard/dashboardHeader'
+import ProjectsOverview from '@/components/dashboard/projectsOverview'
+import ActivityFeed from '@/components/dashboard/activityFeed'
 
 export const metadata: Metadata = {
   title: 'Dashboard | Real-Time Paint App',

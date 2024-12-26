@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { Paintbrush, Bell, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { ThemeToggle } from '@/components/themeToggle'
+import { ThemeToggle } from '@/components/dashboard/themeToggle'
 
 const navItems = [
   { name: 'Dashboard', href: '/dashboard' },
