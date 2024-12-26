@@ -34,7 +34,7 @@ const allProjects = [
 export default function ProjectsOverview() {
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(0)
-  const projectsPerPage = 5
+  const projectsPerPage = 3
 
   const totalPages = Math.ceil(allProjects.length / projectsPerPage)
   const currentProjects = allProjects.slice(
@@ -56,7 +56,7 @@ export default function ProjectsOverview() {
         <CardTitle className="text-2xl font-bold">Your Projects</CardTitle>
         <Dialog open={isCreateProjectOpen} onOpenChange={setIsCreateProjectOpen}>
           <DialogTrigger asChild>
-            <Button size="sm">New Project</Button>
+            <Button size="lg">New Project</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
