@@ -56,7 +56,7 @@ export default function ProjectsOverview() {
         <CardTitle className="text-2xl font-bold">Your Projects</CardTitle>
         <Dialog open={isCreateProjectOpen} onOpenChange={setIsCreateProjectOpen}>
           <DialogTrigger asChild>
-            <Button size="lg">New Project</Button>
+            <Button size="lg">+<span>     </span>New Project</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
