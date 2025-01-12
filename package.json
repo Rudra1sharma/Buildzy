@@ -1,0 +1,19 @@
+{
+  "name": "sketch-studio",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000M\u0000E\u0000S\u0000S\u0000A\u0000G\u0000E\u0000\r\u0000 \u0000",
+  "main": "index.js",
+  "scripts": {
+  "start": "node server/server.js",
+  "dev": "nodemon server/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.2",
+    "nodemon": "^3.1.9"
+  }
+}
