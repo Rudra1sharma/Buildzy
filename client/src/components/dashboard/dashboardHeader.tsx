@@ -12,6 +12,8 @@ const navItems = [
   { name: 'Canvas', href: '/canvas' },
   { name: 'Teams', href: '/teams' },
   { name: 'Gallery', href: '/gallery' },
+  { name: 'Login', href: '/login' },
+  { name: 'Signup', href: '/signup' },
 ]
 
 export default function DashboardHeader() {
