@@ -23,7 +23,10 @@ export default function SignupCard() {
         <div className="min-h-screen flex items-center justify-center bg-background">
             <Card className="w-[400px]">
                 <CardHeader className="space-y-1 flex justify-center items-center">
-                    <a href="/dashboard" className="flex items-center gap-2 self-center font-medium">
+                    <a
+                        href="/dashboard"
+                        className="flex items-center gap-2 self-center font-medium"
+                    >
                         <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
                             <Paintbrush className="h-6 w-6" />
                         </div>
@@ -32,6 +35,7 @@ export default function SignupCard() {
                     <CardTitle className="text-2xl font-bold">
                         Create an account
                     </CardTitle>
+
                     {/* <ThemeToggle /> */}
                     <CardDescription className="flex justify">
                         Let's get started. Fill in the details below to create your account.
@@ -108,8 +112,11 @@ export default function SignupCard() {
                 <CardFooter className="flex flex-col">
                     <Button className="w-full">SignUp</Button>
                     <p className="mt-2 text-center text-sm text-muted-foreground">
-                        Already have an account?{' '}
-                        <Link href="/login" className="text-primary underline-offset-4 hover:underline">
+                        Already have an account?{" "}
+                        <Link
+                            href="/login"
+                            className="text-primary underline-offset-4 hover:underline"
+                        >
                             Sign in
                         </Link>
                     </p>
