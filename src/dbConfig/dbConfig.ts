@@ -10,7 +10,7 @@ export async function connect() {
                 console.log("Connections already exists")
                 return;
             }
-
+            console.log(process.env.MONGO_URI!)
         mongoose.connect(process.env.MONGO_URI!);
         const connection = mongoose.connection;
 
