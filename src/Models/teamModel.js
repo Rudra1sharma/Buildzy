@@ -1,11 +1,6 @@
 import mongoose, { Mongoose } from "mongoose";
 
 const teamSchema = new mongoose.Schema({
-    // team members ki array
-    // team ka leader
-    // team ka naam 
-    // desciption 
-    // invitations ki array
     
     leader: {
         type: mongoose.Schema.Types.ObjectId,
@@ -39,7 +34,14 @@ const teamSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "invitation"
     }],
-    
+
+    projects: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "project",
+      }
+    ],
+ 
 },
     {
         timestamps: true
