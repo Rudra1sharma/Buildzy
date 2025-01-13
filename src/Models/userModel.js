@@ -31,11 +31,6 @@ const userSchema = new mongoose.Schema({
         ref: 'Team'
     }],
 
-    projects: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'project'
-    }],
-
     canvas: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'canvas'
@@ -56,6 +51,5 @@ const userSchema = new mongoose.Schema({
     }
 );
 
-const User = mongoose.models.User || mongoose.model("user", userSchema);
-
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 export default User;
