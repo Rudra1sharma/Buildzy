@@ -1,4 +1,4 @@
-import mongoose, { mongoose } from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 
 const invitationSchema = new mongoose.Schema({
 

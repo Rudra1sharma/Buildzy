@@ -1,18 +1,47 @@
-import { UserPlus, Check, X } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { ScrollArea } from '@/components/ui/scroll-area'
+'use client'
+
+import { UserPlus, Check, X } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback} from "@/components/ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useEffect, useState } from "react";
+import axios from "axios";
+const id = {_id : '678a8285d7a0d7ac795afa4e'}
+
 
 const invitations = [
-  { id: 1, teamName: 'Pixel Perfectors', inviter: 'Alex Johnson' },
-  { id: 2, teamName: 'Creative Minds', inviter: 'Sam Smith' },
-  { id: 3, teamName: 'Design Wizards', inviter: 'Emma Watson' },
-  { id: 4, teamName: 'Color Harmony', inviter: 'Olivia Brown' },
-  { id: 5, teamName: 'Digital Dreamers', inviter: 'Liam Wilson' },
-]
+  { id: 1, teamName: "Pixel Perfectors", inviter: "Alex Johnson" },
+  { id: 2, teamName: "Creative Minds", inviter: "Sam Smith" },
+  { id: 3, teamName: "Design Wizards", inviter: "Emma Watson" },
+  { id: 4, teamName: "Color Harmony", inviter: "Olivia Brown" },
+  { id: 5, teamName: "Digital Dreamers", inviter: "Liam Wilson" },
+];
 
 export default function TeamInvitations() {
+  const [invites, useInvites] = useState(Array<{} | []>)
+
+
+  const getInvites = async ()=>{
+    try {
+      const invitation = await axios.get('/api/invitation/getInvite', {
+        params: { id: id._id }
+      });
+      console.log("invitations: ", invitation)
+    } catch (error: any) {
+      alert(error.response.data.error)
+    }
+  }
+  useEffect(()=>{
+    getInvites()
+  }, [])
+
   return (
     <Card>
       <CardHeader>
@@ -23,10 +52,15 @@ export default function TeamInvitations() {
         <ScrollArea className="h-[173px] pr-4">
           <div className="space-y-4">
             {invitations.map((invitation) => (
-              <div key={invitation.id} className="flex items-center justify-between">
+              <div
+                key={invitation.id}
+                className="flex items-center justify-between"
+              >
                 <div className="flex items-center space-x-4">
                   <Avatar>
-                    <AvatarFallback>{invitation.teamName.slice(0, 2)}</AvatarFallback>
+                    <AvatarFallback>
+                      {invitation.teamName.slice(0, 2)}
+                    </AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="font-medium">{invitation.teamName}</p>
@@ -51,6 +85,5 @@ export default function TeamInvitations() {
         </ScrollArea>
       </CardContent>
     </Card>
-  )
+  );
 }
-

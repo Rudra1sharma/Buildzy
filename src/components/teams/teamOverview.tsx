@@ -17,12 +17,6 @@ const teams = [
   { id: 4, name: 'Color Harmony', members: 6, projects: 10 },
   { id: 5, name: 'Digital Dreamers', members: 4, projects: 7 },
   { id: 6, name: 'Brush Masters', members: 3, projects: 9 },
-  { id: 2, name: 'Creative Minds', members: 3, projects: 8 },
-  { id: 3, name: 'Pixel Perfectors', members: 4, projects: 15 },
-  { id: 4, name: 'Color Harmony', members: 6, projects: 10 },
-  { id: 2, name: 'Creative Minds', members: 3, projects: 8 },
-  { id: 3, name: 'Pixel Perfectors', members: 4, projects: 15 },
-  { id: 4, name: 'Color Harmony', members: 6, projects: 10 },
 ]
 
 export default function TeamOverview() {

@@ -1,7 +1,5 @@
 import {connect} from '@/dbConfig/dbConfig'; 
 import Invitation from '@/Models/invitationModel';
-import User from '@/Models/userModel';
-import Team from '@/Models/teamModel';
 
 
 export default async function handler(req: Request, res:Response){
