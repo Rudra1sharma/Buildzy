@@ -2,19 +2,22 @@ import {connect} from '@/dbConfig/dbConfig';
 import Invitation from '@/Models/invitationModel';
 import User from '@/Models/userModel';
 import Team from '@/Models/teamModel';
+import { NextRequest, NextResponse } from 'next/server';
 
 
-export default async function handler(req: Request, res:Response){
+export async function DELETE(req: NextRequest, res:NextResponse){
     if(req.method !== 'DELETE'){
-        return Response.json({error: "Invalid HTTPS method", status: 405});
+        return NextResponse.json({error: "Invalid HTTPS method", status: 405});
     }
     try {
         await connect();
-        const {userId, invitationId} = await req.json();
+        const url = new URL(req.url);
+        const userId = url.searchParams.get("userid");
+        const invitationId = url.searchParams.get("invitationId")
         //find invitation
         const invitation =await Invitation.findById(invitationId);
         if(!invitation){
-            return Response.json({message: "Invitation Not Found", status: 404});
+            return NextResponse.json({message: "Invitation Not Found", status: 404});
         }
         await Invitation.findByIdAndDelete(invitationId);
 
@@ -26,9 +29,9 @@ export default async function handler(req: Request, res:Response){
             $pull:{invitations: invitationId}
         })
 
-        return Response.json({message: "Invitation Deleted Successfully"}, {status: 200});
+        return NextResponse.json({message: "Invitation Deleted Successfully"}, {status: 200});
 
     } catch (error) {
-        return Response.json({error: "Internal server error at accept Invite"}, {status: 500});
+        return NextResponse.json({error: "Internal server error at accept Invite"}, {status: 500});
     }
 }

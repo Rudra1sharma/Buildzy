@@ -1,4 +1,4 @@
-import mongoose, { Mongoose } from "mongoose";
+const mongoose = require('mongoose')
 
 const invitationSchema = new mongoose.Schema({
 
@@ -21,7 +21,7 @@ const invitationSchema = new mongoose.Schema({
     },
 },
     {
-        timestamp: true
+        timestamps: true
     }
 );
 

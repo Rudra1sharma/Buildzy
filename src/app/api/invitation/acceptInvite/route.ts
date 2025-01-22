@@ -2,36 +2,38 @@ import {connect} from '@/dbConfig/dbConfig';
 import Invitation from '@/Models/invitationModel';
 import User from '@/Models/userModel';
 import Team from '@/Models/teamModel';
+import { NextRequest, NextResponse } from 'next/server';
 
 
-export default async function handler(req: Request, res:Response){
+export async function POST(req: NextRequest, res:NextResponse){
     if(req.method !== 'POST'){
-        return Response.json({error: "Invalid HTTPS method", status: 405});
+        return NextResponse.json({error: "Invalid HTTPS method", status: 405});
     }
+    await connect();
     try {
-        await connect();
-        const {userId, invitationId} = await req.json();
+        const {userid, invitationId} = await req.json();
+        // console.log(userid, " ", invitationId)
         //find invitation
-        const invitation =await Invitation.findById(invitationId);
+        const invitation = await Invitation.findOne({_id: invitationId});       
         if(!invitation){
-            return Response.json({message: "Invitation Not Found", status: 404});
+            return NextResponse.json({message: "Invitation Not Found", status: 404});
         }
         //check user is reciever
-        if(invitation.receiver.toString() === userId){
-            return Response.json({message: "Non-Authorized to accept the invite", status:403});
+        if(invitation.receiver.toString() === userid){
+            return NextResponse.json({message: "Non-Authorized to accept the invite", status:403});
         }
         //already accepted or declined
         if(invitation.status !== "pending"){
-            return Response.json({message: "Already processed", status:400})
+            return NextResponse.json({message: "Already processed", status:400})
         }
         //accept the invitation
         invitation.status = "accepted";
         await invitation.save();
 
         //find user and add the team
-        const user = await User.findById(userId);
+        const user = await User.findById(userid);
         if(!user){
-            return Response.json({message: "User not found"}, {status: 404});
+            return NextResponse.json({message: "User not found"}, {status: 404});
         }
         user.teams.push(invitation.team);
         await user.save();
@@ -39,14 +41,14 @@ export default async function handler(req: Request, res:Response){
         //find the team and update the team members
         const team = await Team.findById(invitation.team);
         if(!team){
-            return Response.json({message: "Team not found"}, {status: 404});
+            return NextResponse.json({message: "Team not found"}, {status: 404});
         }
-        team.Members.push({userId});
+        team.Members.push({userid});
         await team.save();
 
-        return Response.json({message: "Invitation Accepted Successfully"}, {status: 200});
+        return NextResponse.json({message: "Invitation Accepted Successfully"}, {status: 200});
 
     } catch (error) {
-        return Response.json({error: "Internal server error at accept Invite"}, {status: 500});
+        return NextResponse.json({error: "Internal server error at accept Invite"}, {status: 500});
     }
 }

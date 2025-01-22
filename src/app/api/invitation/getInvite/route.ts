@@ -2,19 +2,17 @@ import { connect } from "@/dbConfig/dbConfig"
 import Invitation from "@/Models/invitationModel";
 import User from "@/Models/userModel";
 import { NextRequest, NextResponse } from "next/server";
-import { useState } from "react";
 
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
     if (req.method !== 'GET') {
         return NextResponse.json({ error: "Invalid HTTPS method", status: 405 });
     }
     try {
         connect();
         const url = new URL(req.url);
-        const id = url.searchParams.get("id");
-    
-        const user = await User.findById(id)
+        const userid = url.searchParams.get("id");
+        const user = await User.findById(userid);
         if (!user) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
@@ -27,7 +25,6 @@ export async function GET(req: NextRequest, res: NextResponse) {
         const invites = invitations.map((invite, index)=>({
             ...invite.toObject(), id:index+1,
         }))
-
         return NextResponse.json({invitations: invites, status: 200})
     } catch (error) {
         return NextResponse.json(
