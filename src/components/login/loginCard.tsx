@@ -86,7 +86,6 @@ export default function LoginPage() {
                                     }} />) : <EyeOff className="absolute right-4 top-1 z-10 cursor-pointer text-gray-500"
                                         onClick={() => setIsView(!isView)} />}
                             </div>
-
                         </div>
                         <CardFooter className="flex flex-col">
                             <Button className="w-full" type="submit" disabled={loading}>{loading ? <span>Logging...</span> : <span>Log In Your Account</span>}</Button>

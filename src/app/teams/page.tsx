@@ -9,10 +9,10 @@ import DashboardHeader from '@/components/dashboard/dashboardHeader'
 import React from 'react'
 
 export default function TeamsPage() {
-  const [flag,setflag]=React.useState(false);
+  const [flag, setflag] = React.useState(false);
   return (
     <div className="flex flex-col min-h-screen">
-        <DashboardHeader/>
+      <DashboardHeader />
       <div className="grid gap-8 m-5 md:grid-cols-2">
         <TeamOverview flag={flag} setflag={setflag} />
         <div className="space-y-8">

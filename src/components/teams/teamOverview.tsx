@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import axios from 'axios'
 import { Types } from "mongoose";
 // const teams = [
@@ -49,11 +49,36 @@ interface props{
 }
 
 export default function TeamOverview({flag,setflag}: props) {
-  const [isAddMemberOpen, setIsAddMemberOpen] = useState(false)
-  const [isAddProjectOpen, setIsAddProjectOpen] = useState(false)
   const [teams, setTeams] = useState<Team[]>([])
   const [selectedteams, setselectedTeams] = useState<Types.ObjectId[]>([])
   const [selectedTeamId, setSelectedTeamId] = useState<Types.ObjectId | null>(null);
+  const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
+  const [isAddProjectOpen, setIsAddProjectOpen] = useState(false);
+  const [addMember, setAddMember] = useState<string>('');
+
+  const addMemberHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAddMember(e.target.value);
+  };
+
+  const addMemberSubmit = async (teamId: Types.ObjectId) => {
+    console.log("receiverUsername: ", addMember, " teamId: ", teamId, " inviterId: ", id)
+    try {
+      const response = await axios.post<any>('/api/invitation/sendInvite', {
+        teamId: teamId,
+        receiverUsername: addMember,
+        inviterId: id
+      });
+      alert("Invite Send Successfully")
+      // console.log('Invitation sent:', response.data);
+    } catch (error: any) {
+      // console.error('Error sending invitation:');
+      alert(error.response?.data?.message);
+    }
+    finally{
+      setIsAddMemberOpen(false); // Close the dialog
+      setAddMember(''); // Clear the input
+    }
+  };
   useEffect(() => {
     const fetchTeams = async () => {
       try {
@@ -112,7 +137,7 @@ export default function TeamOverview({flag,setflag}: props) {
     }
   }
   return (
-    <Card className='h-[470px]'>
+    <Card className="h-[470px]">
       <CardHeader>
         <CardTitle>Your Teams</CardTitle>
         <CardDescription>Teams you're currently a part of</CardDescription>
@@ -136,10 +161,13 @@ export default function TeamOverview({flag,setflag}: props) {
                   </div>
                 </div>
                 <div className="flex space-x-2">
-                  <Dialog open={isAddMemberOpen && selectedTeamId?.toString() === team._id.toString()} onOpenChange={(open) => {
-                    setIsAddMemberOpen(open)
-                    if (open) setSelectedTeamId(team._id)
-                  }}>
+                  <Dialog
+                    open={isAddMemberOpen && selectedTeamId?.toString() === team._id.toString()}
+                    onOpenChange={(open) => {
+                      setIsAddMemberOpen(open);
+                      if (open) setSelectedTeamId(team._id);
+                    }}
+                  >
                     <DialogTrigger asChild>
                       <Button variant="ghost" size="icon">
                         <UserPlus className="h-4 w-4" />
@@ -153,16 +181,27 @@ export default function TeamOverview({flag,setflag}: props) {
                           Enter the unique ID of the user you want to add to this team.
                         </DialogDescription>
                       </DialogHeader>
-                      <Input placeholder="Enter user's unique ID" />
+                      <Input
+                        id="addMember"
+                        type="text"
+                        value={addMember}
+                        placeholder="Enter user's unique ID"
+                        onChange={addMemberHandler}
+                      />
                       <DialogFooter>
-                        <Button type="submit">Add Member</Button>
+                        <Button type="submit" onClick={() => addMemberSubmit(team._id)}>
+                          Add Member
+                        </Button>
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
-                  <Dialog open={isAddProjectOpen && selectedTeamId === team._id} onOpenChange={(open) => {
-                    setIsAddProjectOpen(open)
-                    if (open) setSelectedTeamId(team._id)
-                  }}>
+                  <Dialog
+                    open={isAddProjectOpen && selectedTeamId === team._id}
+                    onOpenChange={(open) => {
+                      setIsAddProjectOpen(open);
+                      if (open) setSelectedTeamId(team._id);
+                    }}
+                  >
                     <DialogTrigger asChild>
                       <Button variant="ghost" size="icon">
                         <FolderPlus className="h-4 w-4" />
@@ -193,6 +232,5 @@ export default function TeamOverview({flag,setflag}: props) {
         </ScrollArea>
       </CardContent>
     </Card>
-  )
+  );
 }
-
