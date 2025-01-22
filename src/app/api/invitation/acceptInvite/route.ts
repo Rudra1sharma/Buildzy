@@ -19,24 +19,19 @@ export async function POST(req: NextRequest, res:NextResponse){
             return NextResponse.json({message: "Invitation Not Found", status: 404});
         }
         //check user is reciever
-        if(invitation.receiver.toString() === userid){
+        if(invitation.inviter.toString() === userid){
             return NextResponse.json({message: "Non-Authorized to accept the invite", status:403});
         }
         //already accepted or declined
         if(invitation.status !== "pending"){
             return NextResponse.json({message: "Already processed", status:400})
         }
-        //accept the invitation
-        invitation.status = "accepted";
-        await invitation.save();
-
         //find user and add the team
         const user = await User.findById(userid);
         if(!user){
             return NextResponse.json({message: "User not found"}, {status: 404});
         }
         user.teams.push(invitation.team);
-        await user.save();
 
         //find the team and update the team members
         const team = await Team.findById(invitation.team);
@@ -44,7 +39,12 @@ export async function POST(req: NextRequest, res:NextResponse){
             return NextResponse.json({message: "Team not found"}, {status: 404});
         }
         team.Members.push({userid});
+
         await team.save();
+        await user.save();
+        //accept the invitation
+        invitation.status = "accepted";
+        await invitation.save();
 
         return NextResponse.json({message: "Invitation Accepted Successfully"}, {status: 200});
 

@@ -16,8 +16,8 @@ export async function POST(req: NextRequest, res:NextResponse){
             return NextResponse.json({message: "Invitation Not Found", status: 404});
         }
         //check user is reciever
-        if(invitation.receiver.toString() === userId){
-            return NextResponse.json({message: "Non-Authorized to accept the invite", status:403});
+        if(invitation.inviter.toString() === userId){
+            return NextResponse.json({message: "Non-Authorized to decline the invite", status:403});
         }
         //already accepted or declined
         if(invitation.status !== "pending"){
