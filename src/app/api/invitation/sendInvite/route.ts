@@ -4,6 +4,7 @@ import User from '@/Models/userModel';
 import Team from '@/Models/teamModel';
 import { findSourceMap } from 'module';
 import { NextRequest, NextResponse } from 'next/server';
+import { doesMemberExist } from '@/helper/doesMemberExist';
 
 
 export async function POST(req: NextRequest){
@@ -20,17 +21,17 @@ export async function POST(req: NextRequest){
         //check reciever exist
         const receiver = await User.findOne({username: receiverUsername});
         if(!receiver){
-            return NextResponse.json({message: 'Please enter the correct reciever username'}, {status: 404});
+            return NextResponse.json({message: 'Please enter the correct member username'}, {status: 404});
         }
         //check the reciever already exist in team
         const team = await Team.findById(teamId);
         if(!team){
             return NextResponse.json({message: 'Team not found'},{status: 404});
         }
-        if(team.Members.includes(receiver._id)){
+        if(doesMemberExist(team.Members, receiver._id)){
             return NextResponse.json({message: 'User already in team'}, {status: 400});
         }
-        //create a new Invitation
+        // create a new Invitation
         const invitation = new Invitation({
             receiver: receiver._id,
             team:teamId,
