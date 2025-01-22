@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
         const teamId = searchParams.get('teamId');
-
+        console.log(teamId)
         if (!teamId) {
             return NextResponse.json({ message: "Team ID is required", success: false }, { status: 400 });
         }
