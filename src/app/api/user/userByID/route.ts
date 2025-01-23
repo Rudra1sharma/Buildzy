@@ -1,5 +1,4 @@
 // get user from id
-// get all user of a team by team id
 
 import User from "@/Models/userModel";
 import { NextRequest, NextResponse } from "next/server";
@@ -9,7 +8,7 @@ export async function GET(request: NextRequest) {
   try {
     const url = new URL(request.url);
     const id = url.searchParams.get("id");
-
+    console.log(id)
     if (!id) {
       return NextResponse.json({ error: "ID is required" }, { status: 400 });
     }

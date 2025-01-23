@@ -1,12 +1,12 @@
 import Project from "@/Models/projectModel";
+import Team from "@/Models/teamModel";
 import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/dbConfig/dbConfig"
 
 export async function POST(request : NextRequest) {
     try {
         const body = await request.json();
-
-        const { name, description, teamId, members } = body;
+        const { name, description, teamId, owner} = body;
 
         if (!name || !teamId) {
             return NextResponse.json({ error: "Name and Team ID are required" }, { status: 400 });
@@ -18,10 +18,16 @@ export async function POST(request : NextRequest) {
             name,
             description: description || "",
             teamId,
-            members: members || [],
+            owner,
         });
 
         const savedProject = await newProject.save();
+
+        const updatedTeam = await Team.findByIdAndUpdate(
+            teamId,
+            { $push: { projects: savedProject._id } },
+            {new: true}
+        );
         return NextResponse.json(savedProject, { status: 201 });
     }
     catch(error) {

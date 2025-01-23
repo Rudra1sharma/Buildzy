@@ -3,6 +3,7 @@ import Project from "@/Models/projectModel";
 import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/dbConfig/dbConfig";
 import { json } from "stream/consumers";
+import Team from "@/Models/teamModel";
 
 export async function GET(request: NextRequest) {
   try {
@@ -18,7 +19,8 @@ export async function GET(request: NextRequest) {
     await connect();
 
     // all projects by team ID
-    const projects = await Project.find({ team });
+    const teamineed = await Team.findById(team)
+    const projects = await teamineed.projects
 
     if (!projects || projects.length === 0) {
       return NextResponse.json(
