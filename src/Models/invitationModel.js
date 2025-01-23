@@ -1,4 +1,4 @@
-import mongoose, { mongoose } from "mongoose";
+const mongoose = require('mongoose')
 
 const invitationSchema = new mongoose.Schema({
 
@@ -7,7 +7,11 @@ const invitationSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-
+    inviter: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     team: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Team',
@@ -21,7 +25,7 @@ const invitationSchema = new mongoose.Schema({
     },
 },
     {
-        timestamp: true
+        timestamps: true
     }
 );
 
