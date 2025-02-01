@@ -12,10 +12,10 @@ const projectSchema = new mongoose.Schema({
         required: true
     },
 
-    team: [{
+    team: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Team'
-    }],
+    },
 
     canvas: [{
         type: mongoose.Schema.Types.ObjectId,

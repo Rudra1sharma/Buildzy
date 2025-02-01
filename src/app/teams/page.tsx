@@ -7,9 +7,18 @@ import TeamInvitations from '@/components/teams/teamInvitations'
 import TeamCollaboration from '@/components/teams/teamCollaboration'
 import DashboardHeader from '@/components/dashboard/dashboardHeader'
 import React from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/context/AuthContext'
 
 export default function TeamsPage() {
   const [flag, setflag] = React.useState(false);
+  const { isAuthenticated } = useAuth();
+  const router = useRouter()
+  console.log(isAuthenticated())
+  if (!isAuthenticated()) {
+    router.push('/login')
+    return null;
+  }
   return (
     <div className="flex flex-col min-h-screen">
       <DashboardHeader />
