@@ -2,12 +2,16 @@ import Link from 'next/link'
 import { Paintbrush } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/dashboard/themeToggle'
+import DashboardHeader from '@/components/dashboard/dashboardHeader'
 
 export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <header className="px-4 lg:px-6 h-14 flex items-center">
-        <Link className="flex items-center justify-center" href="/">
+      {/* <header > */}
+      <div className="px-4 lg:px-6 h-14 flex items-center fixed w-[100%]">
+          <DashboardHeader />
+      </div>
+      {/* <Link className="flex items-center justify-center" href="/">
           <Paintbrush className="h-6 w-6 text-primary" />
           <span className="ml-2 text-lg font-bold text-primary">PaintApp</span>
         </Link>
@@ -19,8 +23,8 @@ export default function HomePage() {
             Sign Up
           </Link>
           <ThemeToggle />
-        </nav>
-      </header>
+        </nav> */}
+      {/* </header> */}
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
           <div className="container px-4 md:px-6">
@@ -68,7 +72,7 @@ export default function HomePage() {
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
         <p className="text-xs text-muted-foreground">© 2023 PaintApp. All rights reserved.</p>
-        
+
       </footer>
     </div>
   )
