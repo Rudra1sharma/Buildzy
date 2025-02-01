@@ -1,5 +1,4 @@
 "use client"
-
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { ToolsPanel } from "@/components/canvas/toolsPanel"
@@ -11,12 +10,19 @@ import { ConfirmDialog } from "@/components/canvas/confirmDialog"
 import { Button } from "@/components/ui/button"
 import DashboardHeader from "@/components/dashboard/dashboardHeader"
 import { Save, LogOut, Paintbrush, Share2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/context/AuthContext"
 
 export default function CanvasPage() {
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false)
-
+  const { isAuthenticated } = useAuth();
+  const router = useRouter()
+  console.log(isAuthenticated())
+  if(!isAuthenticated()){
+    router.push('/login')
+    return null;
+  }
   const handleSave = () => {
-    // Implement save functionality
     console.log("Saving canvas...")
   }
 
@@ -41,6 +47,7 @@ export default function CanvasPage() {
   }
 
   return (
+    // <ProtectedRoute>
     <div className="h-screen flex flex-col bg-background">
       <DashboardHeader />
       <div className="h-14 bg-muted/50 border-b flex items-center justify-between px-4">

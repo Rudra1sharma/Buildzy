@@ -4,6 +4,8 @@ import TeamMembers from '@/components/team/teamMembers'
 import TeamProjects from '@/components/team/teamProjects'
 import Pagination from '@/components/pagination'
 import DashboardHeader from '@/components/dashboard/dashboardHeader'
+import { useAuth } from '@/context/AuthContext'
+import { useRouter } from 'next/dist/client/components/navigation'
 
 export const metadata: Metadata = {
     title: 'Team Details | Real-Time Paint App',
@@ -12,6 +14,13 @@ export const metadata: Metadata = {
 
 export default function TeamPage({ params, searchParams }: { params: { teamId: string }, searchParams: { page?: string } }) {
     const currentPage = Number(searchParams.page) || 1
+    const { isAuthenticated } = useAuth();
+    const router = useRouter()
+    console.log(isAuthenticated())
+    if (!isAuthenticated()) {
+        router.push('/login')
+        return null;
+    }
 
     return (
 

@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { ScrollArea } from '@/components/ui/scroll-area'
 import toast from 'react-hot-toast';
 import axios from 'axios'
+import { Team } from '@/types/interfaces';
 import { Types } from "mongoose";
 // const teams = [
 //   { id: 1, name: 'Design Wizards', members: 5, projects: 12 },
@@ -28,20 +29,7 @@ import { Types } from "mongoose";
 // ]
 const id = "678a8285d7a0d7ac795afa4e";
 
-interface Team {
-  _id: Types.ObjectId;
-  leader: Types.ObjectId;
-  Members: {
-    memberId: Types.ObjectId;
-    joinedAt: Date;
-  }[];
-  description: string;
-  invitations: Types.ObjectId[];
-  projects: Types.ObjectId[];
-  teamName: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+
 
 interface props{
   flag:boolean,

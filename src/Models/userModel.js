@@ -1,54 +1,69 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true,
-        trim: true
+      type: String,
+      required: true,
+      trim: true,
     },
 
     username: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
     },
 
     email: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
     },
 
     password: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
 
-    teams: [{
+    teams: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Team'
-    }],
+        ref: "Team",
+      },
+    ],
 
-    canvas: [{
+    canvas: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'canvas'
-    }],
+        ref: "canvas",
+      },
+    ],
 
-    invitations: [{
+    invitations: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'invitation'
-    }],
+        ref: "invitation",
+      },
+    ],
 
-    notification: [{
+    notification: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'notification'
-    }],
-},
-    {
-        timestamps: true
-    }
+        ref: "notification",
+      },
+    ],
+    projects: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "project",
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
 );
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);

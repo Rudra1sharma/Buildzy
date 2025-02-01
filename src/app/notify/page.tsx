@@ -1,6 +1,8 @@
 import { Metadata } from 'next'
 import NotificationsList from '@/components/notificationsList'
 import DashboardHeader from '@/components/dashboard/dashboardHeader'
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 export const metadata: Metadata = {
     title: 'Notifications | Real-Time Paint App',
@@ -8,6 +10,13 @@ export const metadata: Metadata = {
 }
 
 export default function NotificationsPage() {
+    const { isAuthenticated } = useAuth();
+    const router = useRouter()
+    console.log(isAuthenticated())
+    if (!isAuthenticated()) {
+        router.push('/login')
+        return null;
+    }
     return (
         <div className="flex flex-col max-h-screen">
             <DashboardHeader />
