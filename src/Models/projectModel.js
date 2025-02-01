@@ -9,14 +9,17 @@ const projectSchema = new mongoose.Schema({
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
     },
 
-    team: {
+    teamId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Team'
     },
 
+    description: {
+        type: String
+    },
+    
     canvas: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Canvas'

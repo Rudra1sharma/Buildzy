@@ -42,7 +42,13 @@ export default function TeamOverview({flag,setflag}: props) {
   const [selectedTeamId, setSelectedTeamId] = useState<Types.ObjectId | null>(null);
   const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
   const [isAddProjectOpen, setIsAddProjectOpen] = useState(false);
+  const [projectdetails,setprojectdetails] = useState({name:"",teamId:"",description:""});
   const [addMember, setAddMember] = useState<string>('');
+
+  const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
+    const { name, value } = e.target;
+      setprojectdetails(prev => ({ ...prev, [name]: value }));
+    };
 
   const addMemberHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAddMember(e.target.value);
@@ -63,7 +69,7 @@ export default function TeamOverview({flag,setflag}: props) {
       alert(error.response?.data?.message);
     }
     finally{
-      setIsAddMemberOpen(false); // Close the dialog
+      // setIsAddMemberOpen(false); // Close the dialog
       setAddMember(''); // Clear the input
     }
   };
@@ -124,6 +130,30 @@ export default function TeamOverview({flag,setflag}: props) {
       console.log(err);
     }
   }
+
+  const addproject = async(teamid:any)=>{ //error e
+    // setprojectdetails(prev => ({...prev, teamId : teamid }));
+    projectdetails.teamId = teamid;
+    if(!projectdetails.name){
+      toast.error("Project name cannot be empty")
+      return
+    }
+    try{
+      console.log(projectdetails)
+      const res = await axios.post("/api/project/create-project",projectdetails)
+      console.log(res);
+      setIsAddProjectOpen(false);
+      setprojectdetails({
+        name:"",
+        description:"",
+        teamId:""
+      })
+    }
+    catch(e){
+      console.log(e);
+    }
+  }
+
   return (
     <Card className="h-[470px]">
       <CardHeader>
@@ -203,9 +233,10 @@ export default function TeamOverview({flag,setflag}: props) {
                           Enter the name of the new project you want to add to this team.
                         </DialogDescription>
                       </DialogHeader>
-                      <Input placeholder="Enter project name" />
+                      <Input placeholder="Enter project name" name="name" value={projectdetails.name} onChange={handleInputChange}/>
+                      <Input placeholder="Enter Description" name="description" value={projectdetails.description} onChange={handleInputChange} />
                       <DialogFooter>
-                        <Button type="submit">Add Project</Button>
+                        <Button onClick={()=>{addproject(team._id)}}>Add Project</Button>
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
