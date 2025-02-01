@@ -2,7 +2,8 @@ import mongoose, { mongoose } from "mongoose";
 
 const canvasSchema = new mongoose.Schema({
     name: {
-        type: String
+        type: String,
+        required: true
     },
 
     image: {
