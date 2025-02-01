@@ -36,6 +36,11 @@ const userSchema = new mongoose.Schema({
         ref: 'canvas'
     }],
 
+    projects: [{
+        type: mongoose.Schema.Types.ObjectId,
+        // ref: 'project'
+    }],
+
     invitations: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'invitation'
