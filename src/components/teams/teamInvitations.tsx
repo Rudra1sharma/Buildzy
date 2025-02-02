@@ -95,13 +95,13 @@ export default function TeamInvitations() {
         <CardTitle>Team Invitations</CardTitle>
         <CardDescription>Pending invitations to join teams</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="h-[197px] pr-4">
         {loading ? (
           <p className="text-center text-muted-foreground">Loading Invitations...</p>
         ) : invites?.length === 0 ? (
           <p>No pending invitations.</p>
         ) : (
-          <ScrollArea className="h-[173px] pr-4">
+          <ScrollArea>
             <div className="space-y-4">
               {invites?.map((invitation) => (
                 <div key={invitation.id} className="flex items-center justify-between">

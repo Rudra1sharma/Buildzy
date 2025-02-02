@@ -1,12 +1,24 @@
 'use client'
 
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { FolderPlus } from 'lucide-react'
 import ProjectCard from '@/components/team/projectCard'
+import toast from 'react-hot-toast'
+import axios from 'axios'
+import { Types } from 'mongoose'
+
+interface Project{
+    _id: Types.ObjectId;
+    name: Types.ObjectId;
+    owner: Types.ObjectId;
+    teamId: Types.ObjectId;
+    canvas: Types.ObjectId[];
+    description?: string;
+}
 
 const projects = [
   { id: 1, title: 'Website Redesign', thumbnail: '/placeholder.svg?height=100&width=200', lastEdited: '2 hours ago', members: 4 },
@@ -20,12 +32,37 @@ const projects = [
   { id: 9, title: 'App Icon Design', thumbnail: '/placeholder.svg?height=100&width=200', lastEdited: '2 months ago', members: 2 },
 ]
 
+const id = "678a8285d7a0d7ac795afa4e";
+const teamId = "678a9e6943fcca9a49385e84"
+
 export default function TeamProjects({ teamId, currentPage }: { teamId: string, currentPage: number }) {
   const [isAddProjectOpen, setIsAddProjectOpen] = useState(false)
+  const [flag,setflag]= useState(false);
   const projectsPerPage = 6
   const startIndex = (currentPage - 1) * projectsPerPage
   const endIndex = startIndex + projectsPerPage
+  const [projects,setprojects] = useState<Project[]>([])
   const paginatedProjects = projects.slice(startIndex, endIndex)
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        if (!id) {
+          toast.error("User not logged in")
+          return
+        }
+        const {data}= await axios.get("/api/project/get-all-Project_byID", { params: { teamId: teamId } })
+        console.log(data)
+        setprojects(data)
+        // console.log(data.projects)
+        
+      } catch (error: any) {
+        console.log(error)
+        toast.error(error.response.data.error)
+      }
+    }
+    fetchProjects()
+  }, [flag])
 
   return (
     <Card>
@@ -57,8 +94,15 @@ export default function TeamProjects({ teamId, currentPage }: { teamId: string, 
       </CardHeader>
       <CardContent>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {paginatedProjects.map((project) => (
-            <ProjectCard key={project.id} {...project} />
+          {projects.map((proj) => (
+            <ProjectCard
+            key={proj._id.toString()}
+            id={proj._id}
+            title={proj.name.toString()}
+            thumbnail="/placeholder.svg" 
+            lastEdited="Just now" 
+            description={proj.description || 'No description available'}
+            />
           ))}
         </div>
       </CardContent>

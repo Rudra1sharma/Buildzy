@@ -5,11 +5,13 @@ import { connect } from "@/dbConfig/dbConfig";
 import { json } from "stream/consumers";
 
 export async function GET(request: NextRequest) {
+  console.log("helllo")
   try {
     const url = new URL(request.url);
-    const team = url.searchParams.get("teamId");
+    const teamId = url.searchParams.get("teamId");
 
-    if (!team) {
+    if (!teamId) {
+      console.log("id daal")
       return NextResponse.json(
         { error: "Team ID is required" },
         { status: 400 }
@@ -18,15 +20,16 @@ export async function GET(request: NextRequest) {
     await connect();
 
     // all projects by team ID
-    const projects = await Project.find({ team });
+    const projects = await Project.find({ teamId });
 
     if (!projects || projects.length === 0) {
+      console.log("hatt")
       return NextResponse.json(
         { error: "No Projects found for this team" },
         { status: 404 }
       );
     }
-
+    console.log(projects)
     return NextResponse.json(projects, { status: 200 });
   } catch (error) {
     console.error(error);
