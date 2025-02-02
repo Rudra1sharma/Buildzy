@@ -96,6 +96,9 @@ export default function TeamOverview({ flag, setflag }: props) {
     fetchTeams();
   }, [id, flag]);
 
+  useEffect(()=>{
+    console.log(teams)
+  },[teams])
   const leaveteam = async (teamid: any, userid: any) => {
     console.log("clicked")
     try {
