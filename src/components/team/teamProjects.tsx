@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { FolderPlus } from 'lucide-react'
+import { FilePenLine, FolderPlus, Loader2 } from 'lucide-react'
 import ProjectCard from '@/components/team/projectCard'
 import toast from 'react-hot-toast'
 import axios from 'axios'
@@ -37,6 +37,7 @@ const teamId = "678a9e6943fcca9a49385e84"
 
 export default function TeamProjects({ teamId, currentPage }: { teamId: string, currentPage: number }) {
   const [isAddProjectOpen, setIsAddProjectOpen] = useState(false)
+  const [loading, setLoading] = useState(true);
   const [flag,setflag]= useState(false);
   const projectsPerPage = 6
   const startIndex = (currentPage - 1) * projectsPerPage
@@ -60,14 +61,17 @@ export default function TeamProjects({ teamId, currentPage }: { teamId: string, 
         console.log(error)
         toast.error(error.response.data.error)
       }
+      finally{
+        setLoading(false)
+      }
     }
     fetchProjects()
   }, [flag])
 
   return (
-    <Card>
+    <Card className='h-[77vh]'>
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between ">
           <CardTitle>Team Projects</CardTitle>
           <Dialog open={isAddProjectOpen} onOpenChange={setIsAddProjectOpen}>
             <DialogTrigger asChild>
@@ -92,19 +96,29 @@ export default function TeamProjects({ teamId, currentPage }: { teamId: string, 
         </div>
         <CardDescription>Manage your team projects</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {projects.map((proj) => (
-            <ProjectCard
-            key={proj._id.toString()}
-            id={proj._id}
-            title={proj.name.toString()}
-            thumbnail="/placeholder.svg" 
-            lastEdited="Just now" 
-            description={proj.description || 'No description available'}
-            />
-          ))}
-        </div>
+      <CardContent className='border-gray-800 border'>
+      {loading ? (
+          <div className="flex justify-center items-center h-full">
+            <Loader2 className="animate-spin h-8 w-8 text-gray-500" />
+          </div>
+        ) : projects.length === 0 ? (
+          <div className="flex justify-center items-center h-full text-gray-500 text-lg">
+            No projects available
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {projects.map((proj) => (
+              <ProjectCard
+                key={proj._id.toString()}
+                id={proj._id}
+                title={proj.name.toString()}
+                thumbnail="/placeholder.svg"
+                lastEdited="Just now"
+                description={proj.description || 'No description available'}
+              />
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   )
