@@ -55,7 +55,6 @@ export async function PUT(request: NextRequest) {
             }
             ,{new:true}
         )
-        await team.deleteOne();
         return NextResponse.json({ message: "User left the team successfully", team: team, success: true }, { status: 201 });
 
     } catch (error: any) {

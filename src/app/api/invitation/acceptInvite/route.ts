@@ -12,7 +12,7 @@ export async function POST(req: NextRequest, res:NextResponse){
     await connect();
     try {
         const {userid, invitationId} = await req.json();
-        // console.log(userid, " ", invitationId)
+        console.log(userid, " ", invitationId)
         //find invitation
         const invitation = await Invitation.findOne({_id: invitationId});       
         if(!invitation){
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest, res:NextResponse){
         }
         //already accepted or declined
         if(invitation.status !== "pending"){
-            return NextResponse.json({message: "Already processed", status:400})
+            return NextResponse.json({message: `Already ${invitation.status}`, status:400})
         }
         //find user and add the team
         const user = await User.findById(userid);
@@ -33,19 +33,20 @@ export async function POST(req: NextRequest, res:NextResponse){
         }
         user.teams.push(invitation.team);
 
-        //find the team and update the team members
         const team = await Team.findById(invitation.team);
-        if(!team){
-            return NextResponse.json({message: "Team not found"}, {status: 404});
+        if (!team) {
+            return NextResponse.json({ message: "Team not found" }, { status: 404 });
         }
-        team.Members.push({userid});
 
-        await team.save();
-        await user.save();
-        //accept the invitation
-        invitation.status = "accepted";
-        await invitation.save();
-
+        team.Members.push({ memberId: userid });
+        try{
+            await user.save();
+            await team.save();
+            invitation.status = "accepted";
+            await invitation.save();
+        }catch(error){
+            console.log("error at saving data in accept")
+        }
         return NextResponse.json({message: "Invitation Accepted Successfully"}, {status: 200});
 
     } catch (error) {

@@ -22,6 +22,6 @@ const canvasSchema = new mongoose.Schema({
     }
 );
 
-const Canvas = mongoose.models.canvas || mongoose.model("canvas", canvasSchema);
+const Canvas = mongoose.models.Canvas || mongoose.model("Canvas", canvasSchema);
 
 export default Canvas;
