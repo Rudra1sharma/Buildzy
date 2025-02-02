@@ -15,10 +15,9 @@ import { useAuth } from "@/context/AuthContext"
 
 export default function CanvasPage() {
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false)
-  const { isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const router = useRouter()
-  console.log(isAuthenticated())
-  if(!isAuthenticated()){
+  if(!!!user){
     router.push('/login')
     return null;
   }

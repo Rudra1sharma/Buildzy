@@ -13,30 +13,19 @@ import toast from 'react-hot-toast';
 import axios from 'axios'
 import { Team } from '@/types/interfaces';
 import { Types } from "mongoose";
-// const teams = [
-//   { id: 1, name: 'Design Wizards', members: 5, projects: 12 },
-//   { id: 2, name: 'Creative Minds', members: 3, projects: 8 },
-//   { id: 3, name: 'Pixel Perfectors', members: 4, projects: 15 },
-//   { id: 4, name: 'Color Harmony', members: 6, projects: 10 },
-//   { id: 5, name: 'Digital Dreamers', members: 4, projects: 7 },
-//   { id: 6, name: 'Brush Masters', members: 3, projects: 9 },
-//   { id: 2, name: 'Creative Minds', members: 3, projects: 8 },
-//   { id: 3, name: 'Pixel Perfectors', members: 4, projects: 15 },
-//   { id: 4, name: 'Color Harmony', members: 6, projects: 10 },
-//   { id: 2, name: 'Creative Minds', members: 3, projects: 8 },
-//   { id: 3, name: 'Pixel Perfectors', members: 4, projects: 15 },
-//   { id: 4, name: 'Color Harmony', members: 6, projects: 10 },
-// ]
-const id = "678a8285d7a0d7ac795afa4e";
+import { useAuth } from '@/context/AuthContext';
 
 
 
-interface props{
-  flag:boolean,
-  setflag:React.Dispatch<React.SetStateAction<boolean>>;
+interface props {
+  flag: boolean,
+  setflag: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function TeamOverview({flag,setflag}: props) {
+export default function TeamOverview({ flag, setflag }: props) {
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(true)
+  const id = user?._id;
   const [teams, setTeams] = useState<Team[]>([])
   const [selectedteams, setselectedTeams] = useState<Types.ObjectId[]>([])
   const [selectedTeamId, setSelectedTeamId] = useState<Types.ObjectId | null>(null);
@@ -57,70 +46,60 @@ export default function TeamOverview({flag,setflag}: props) {
         inviterId: id
       });
       alert("Invite Send Successfully")
-      // console.log('Invitation sent:', response.data);
     } catch (error: any) {
-      // console.error('Error sending invitation:');
       alert(error.response?.data?.message);
     }
-    finally{
-      setIsAddMemberOpen(false); // Close the dialog
-      setAddMember(''); // Clear the input
+    finally {
+      setIsAddMemberOpen(false);
+      setAddMember('');
     }
   };
+
+
   useEffect(() => {
     const fetchTeams = async () => {
+      setLoading(true);
       try {
         if (!id) {
-          toast.error("User not logged in")
-          return
+          toast.error('User not logged in');
+          setLoading(false);
+          return;
         }
-        const { data } = await axios.get("/api/team/getteamsbyuser", { params: { userId: id } })
+        const { data } = await axios.get('/api/team/getteamsbyuser', { params: { userId: id } });
         if (data.success) {
-          setselectedTeams(data.teams)
-          console.log("teams ids",data.teams)
-
-
           const detailedTeams = await Promise.all(
             data.teams.map(async (team: Team) => {
-              console.log(team)
               try {
-                const { data: teamData } = await axios.get("/api/team/getteambyid", {
+                const { data: teamData } = await axios.get('/api/team/getteambyid', {
                   params: { teamId: team },
                 });
-                if (teamData.success) {
-                  return teamData.team;
-                } else {
-                  toast.error(`Failed to fetch details for team ${team._id}`);
-                  return null;
-                }
-              } catch (error: any) {
-                console.error(`Error fetching details for team ${team._id}:`, error);
-                toast.error(error.response?.data?.error || "Failed to fetch team details");
+                return teamData.success ? teamData.team : null;
+              } catch (error) {
+                toast.error('Failed to fetch team details');
                 return null;
               }
             })
           );
-          console.log(detailedTeams)
           setTeams(detailedTeams.filter((team) => team !== null));
         }
-      } catch (error: any) {
-        console.log(error)
-        toast.error(error.response.data.error)
+      } catch (error) {
+        toast.error('Failed to fetch teams');
       }
-    }
-    fetchTeams()
-  }, [flag])
+      setLoading(false);
+    };
+    fetchTeams();
+  }, [id, flag]);
 
-  const leaveteam =async(teamid:any,userid:any)=>{
+  const leaveteam = async (teamid: any, userid: any) => {
     console.log("clicked")
-    try{
+    try {
       const response = await axios.put("/api/team/leaveteam", null, {
         params: { teamId: teamid, userId: userid },
       });
       console.log(response.data);
-      setflag(flag=>!flag)
+      setflag(flag => !flag)
     }
-    catch(err){
+    catch (err) {
       console.log(err);
     }
   }
@@ -131,7 +110,8 @@ export default function TeamOverview({flag,setflag}: props) {
         <CardDescription>Teams you're currently a part of</CardDescription>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[350px] pr-4">
+        {loading ? (<p className="text-center text-muted-foreground">Loading teams...</p>) : teams?.length === 0 ? (
+          <p>No Teams.</p>) : (<ScrollArea className="h-[350px] pr-4">
           <div className="space-y-4">
             {teams.map((team) => (
               <div key={team._id?.toString()} className="flex items-center justify-between">
@@ -209,7 +189,7 @@ export default function TeamOverview({flag,setflag}: props) {
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
-                  <Button variant="ghost" size="icon" onClick={()=>{leaveteam(team._id,id)}}>
+                  <Button variant="ghost" size="icon" onClick={() => { leaveteam(team._id, id) }}>
                     <LogOut className="h-4 w-4" />
                     <span className="sr-only">Leave team</span>
                   </Button>
@@ -217,7 +197,8 @@ export default function TeamOverview({flag,setflag}: props) {
               </div>
             ))}
           </div>
-        </ScrollArea>
+        </ScrollArea>)
+        }
       </CardContent>
     </Card>
   );

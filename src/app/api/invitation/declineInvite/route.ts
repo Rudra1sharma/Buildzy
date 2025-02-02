@@ -21,7 +21,7 @@ export async function POST(req: NextRequest, res:NextResponse){
         }
         //already accepted or declined
         if(invitation.status !== "pending"){
-            return NextResponse.json({message: "Already processed", status:400})
+            return NextResponse.json({message: `Already ${invitation.status}`, status:400})
         }
         //accept the invitation
         invitation.status = "declined";

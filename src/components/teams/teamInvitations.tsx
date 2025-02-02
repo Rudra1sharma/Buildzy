@@ -1,5 +1,6 @@
-'use client'
+'use client';
 
+import { useEffect, useState } from 'react';
 import { UserPlus, Check, X } from "lucide-react";
 import {
   Card,
@@ -11,59 +12,82 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useEffect, useState } from "react";
 import axios from "axios";
-import Invitation from "@/Models/invitationModel";
+import { Invitation } from "@/types/interfaces";
+import { useAuth } from "@/context/AuthContext";
+import mongoose, { Types } from 'mongoose';
 
-const userid = '678a8285d7a0d7ac795afa4e';
 
-const invitations = [
-  { id: 1, teamName: "Pixel Perfectors", inviter: "Alex Johnson", _id: '234242'},
-  { id: 2, teamName: "Creative Minds", inviter: "Sam Smith",_id: '234242'},
-  { id: 3, teamName: "Design Wizards", inviter: "Emma Watson",_id: '234242' },
-  { id: 4, teamName: "Color Harmony", inviter: "Olivia Brown",_id: '234242' },
-  { id: 5, teamName: "Digital Dreamers", inviter: "Liam Wilson" ,_id: '234242'},
-];
-
+interface Invites {
+  id: number;
+  _id: Types.ObjectId;
+  inviter: string;
+  receiver: string;
+  team: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 export default function TeamInvitations() {
-  const [invites, setInvites] = useState<Array<{}>>([]);
-
-  const getInvites = async () => {
-    try {
-      const response = await axios.get(`/api/invitation/getInvite?id=${userid}`);
-      setInvites(response.data); // Assuming the response contains an array of invitations
-    } catch (error: any) {
-      alert(error.response?.data?.error || "Failed to fetch invitations");
-    }
-  };
+  const { user } = useAuth();
+  const [invites, setInvites] = useState<Invites[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isMounted, setIsMounted] = useState(false); 
 
   useEffect(() => {
-    getInvites();
+    setIsMounted(true); 
   }, []);
 
-  const acceptInvite = async (invitationId: string) => {
-    // console.log("id: ", id)
+  useEffect(() => {
+    if (isMounted && user?._id) {
+      getInvites(user._id);
+    }
+  }, [isMounted, user]);
+
+  const getInvites = async (userId: any) => {
     try {
-      invitationId = '678a8285d7a0d7ac795afa4e'
-      const response = await axios.post(`/api/invitation/acceptInvite`, { invitationId, userid });
-      alert(response.data.message)
-      getInvites(); // Refresh the list of invitations
+      const response = await axios.get(`/api/invitation/getInvite?id=${userId}`);
+      setInvites(response.data.invitations);
+      console.log(response.data.invitations)
     } catch (error: any) {
-      console.log(error)
+      alert(error.response?.data?.error || "Failed to fetch invitations");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const declineInvite = async (invitationId: string) => {
+  const acceptInvite = async (invitationId: any) => {
+    if (!user?._id) return;
     try {
-      invitationId = '678a8285d7a0d7ac795afa4e'
-      const response = await axios.post(`/api/invitation/declineInvite`, {
-        userid, invitationId
+      const response = await axios.post(`/api/invitation/acceptInvite`, {
+        invitationId,
+        userid: user._id,
       });
       alert(response.data.message);
+      getInvites(user._id);
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
+
+  const declineInvite = async (invitationId:any) => {
+    if (!user?._id) return;
+    try {
+      const response = await axios.post(`/api/invitation/declineInvite`, {
+        userid: user._id,
+        invitationId,
+      });
+      alert(response.data.message);
+      getInvites(user?._id);
     } catch (error: any) {
       alert(error.response?.data?.error || "Failed to decline invitation");
     }
   };
+
+  // ✅ Prevent rendering until the component is mounted
+  // if (!isMounted) {
+  //   return null; 
+  // }
 
   return (
     <Card>
@@ -72,48 +96,41 @@ export default function TeamInvitations() {
         <CardDescription>Pending invitations to join teams</CardDescription>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[173px] pr-4">
-          <div className="space-y-4">
-            {invitations.map((invitation: any) => (
-              <div
-                key={invitation.id}
-                className="flex items-center justify-between"
-              >
-                <div className="flex items-center space-x-4">
-                  <Avatar>
-                    <AvatarFallback>
-                      {invitation.teamName.slice(0, 2)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-medium">{invitation.teamName}</p>
-                    <p className="text-sm text-muted-foreground">
-                      Invited by {invitation.inviter}
-                    </p>
+        {loading ? (
+          <p className="text-center text-muted-foreground">Loading Invitations...</p>
+        ) : invites?.length === 0 ? (
+          <p>No pending invitations.</p>
+        ) : (
+          <ScrollArea className="h-[173px] pr-4">
+            <div className="space-y-4">
+              {invites?.map((invitation) => (
+                <div key={invitation.id} className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <Avatar>
+                      <AvatarFallback>{invitation.team.slice(0, 2)}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-medium">{invitation.team}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Invited by {invitation.inviter}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button variant="outline" size="sm" onClick={() => acceptInvite(invitation._id)}>
+                      <Check className="mr-2 h-4 w-4" />
+                      Accept
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => declineInvite(invitation._id)}>
+                      <X className="mr-2 h-4 w-4" />
+                      Decline
+                    </Button>
                   </div>
                 </div>
-                <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => acceptInvite(invitation._id)} // Pass a callback
-                  >
-                    <Check className="mr-2 h-4 w-4" />
-                    Accept
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => declineInvite(invitation._id)} // Pass a callback
-                  >
-                    <X className="mr-2 h-4 w-4" />
-                    Decline
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
+              ))}
+            </div>
+          </ScrollArea>
+        )}
       </CardContent>
     </Card>
   );

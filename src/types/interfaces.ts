@@ -49,6 +49,7 @@ export interface Notification {
 export interface User {
   _id: Types.ObjectId;
   name: string;
+  username: string;
   email: string;
   password: string;
   projects?: Types.ObjectId[];
