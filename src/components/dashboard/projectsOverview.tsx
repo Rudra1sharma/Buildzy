@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Pencil, Trash2, MoreHorizontal, ChevronLeft, ChevronRight } from 'lucide-react'
@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import axios from 'axios'
 import { Label } from '@/components/ui/label'
 
 // Mock data for projects
@@ -31,10 +32,25 @@ const allProjects = [
   { id: 10, title: 'Organic Forms', lastEdited: '3 months ago', thumbnail: '/placeholder.svg?height=100&width=100', team: { id: 1, name: 'Design Wizards', members: 5 }, isPublic: false },
 ]
 
+const id = "";
+
 export default function ProjectsOverview() {
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(0)
   const projectsPerPage = 3
+
+  const fetchprojects = async () => {
+    try {
+      const response = await axios.get("/api/project/getAllProjectsbyId", { params: { teamId: id } })
+      console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchprojects();
+  }, [])
 
   const totalPages = Math.ceil(allProjects.length / projectsPerPage)
   const currentProjects = allProjects.slice(
@@ -84,9 +100,8 @@ export default function ProjectsOverview() {
           {currentProjects.map((project) => (
             <div key={project.id} className="group relative overflow-hidden rounded-lg border bg-background p-2">
               <div className="absolute left-2 top-2 z-10">
-                <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-                  project.isPublic ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}>
+                <span className={`text-xs font-medium px-2 py-1 rounded-full ${project.isPublic ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  }`}>
                   {project.isPublic ? 'Public' : 'Private'}
                 </span>
               </div>

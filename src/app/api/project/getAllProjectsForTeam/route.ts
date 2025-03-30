@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
     const url = new URL(request.url);
     const team = url.searchParams.get("teamId");
 
+    console.log(team);
     if (!team) {
       return NextResponse.json(
         { error: "Team ID is required" },
