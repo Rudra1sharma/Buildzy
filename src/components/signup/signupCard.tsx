@@ -58,7 +58,7 @@ export default function SignupCard() {
             <Card className="w-[400px]">
                 <CardHeader className="space-y-1 flex justify-center items-center">
                     <a
-                        href="/dashboard"
+                        href="/"
                         className="flex items-center gap-2 self-center font-medium"
                     >
                         <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">

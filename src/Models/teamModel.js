@@ -4,14 +4,14 @@ const teamSchema = new mongoose.Schema({
     
     leader: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "user",
+        ref: "User",
         required: true
     },
 
     Members: [{
         memberId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "user",
+            ref: "User",
             required: true
         },
         joinedAt: {
@@ -32,13 +32,13 @@ const teamSchema = new mongoose.Schema({
 
     invitations: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "invitation"
+        ref: "Invitation"
     }],
 
     projects: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "project",
+        ref: "Project",
       }
     ],
  
@@ -48,6 +48,6 @@ const teamSchema = new mongoose.Schema({
     }
 );
 
-const Team = mongoose.models.team || mongoose.model("team", teamSchema);
+const Team = mongoose.models.Team || mongoose.model("Team", teamSchema);
 
 export default Team;

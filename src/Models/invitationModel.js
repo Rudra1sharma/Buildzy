@@ -29,7 +29,7 @@ const invitationSchema = new mongoose.Schema({
     }
 );
 
-const Invitation = mongoose.models.invitation || mongoose.model("invitation", invitationSchema);
+const Invitation = mongoose.models.Invitation || mongoose.model("Invitation", invitationSchema);
 
 export default Invitation;
 

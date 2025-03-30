@@ -23,15 +23,6 @@ interface Team {
 }
 
 export default function TeamDetails({ teamId }: { teamId: string }) {
-  // In a real application, you would fetch team details based on the teamId
-  // const team = {
-  //   name: 'Design Wizards',
-  //   description: 'A team of creative designers working on various projects.',
-  //   createdAt: 'January 1, 2023',
-  //   members: 5,
-  //   projects: 12,
-  // }
-
   const [team,setteam] = useState<Team | null>()
 
   useEffect(()=>{

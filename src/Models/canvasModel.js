@@ -2,7 +2,8 @@ import mongoose, { mongoose } from "mongoose";
 
 const canvasSchema = new mongoose.Schema({
     name: {
-        type: String
+        type: String,
+        required: true
     },
 
     image: {
@@ -21,6 +22,6 @@ const canvasSchema = new mongoose.Schema({
     }
 );
 
-const Canvas = mongoose.models.canvas || mongoose.model("canvas", canvasSchema);
+const Canvas = mongoose.models.Canvas || mongoose.model("Canvas", canvasSchema);
 
 export default Canvas;
