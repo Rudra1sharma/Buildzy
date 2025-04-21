@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const code = searchParams.get('code');
 
@@ -22,13 +22,13 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
         const tokenData = await tokenRes.json();
         const accessToken = tokenData.access_token; // Log just first few chars for security
-  
+
         const userRes = await fetch('https://api.github.com/user', {
             headers: {
-              Authorization: `token ${accessToken}`,
-              'Accept': 'application/vnd.github.v3+json',        
+                Authorization: `token ${accessToken}`,
+                'Accept': 'application/vnd.github.v3+json',
             },
-          });
+        });
 
         const user = await userRes.json();
 
@@ -40,6 +40,4 @@ export async function GET(req: NextRequest, res: NextResponse) {
         console.log(error)
         return NextResponse.json(error, { status: 500 })
     }
-
-
 }
