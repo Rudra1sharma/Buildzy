@@ -33,7 +33,6 @@ const projects = [
 ]
 
 const id = "678a8285d7a0d7ac795afa4e";
-const teamId = "678a9e6943fcca9a49385e84"
 
 export default function TeamProjects({ teamId, currentPage }: { teamId: string, currentPage: number }) {
   const [isAddProjectOpen, setIsAddProjectOpen] = useState(false)
@@ -43,7 +42,6 @@ export default function TeamProjects({ teamId, currentPage }: { teamId: string, 
   const startIndex = (currentPage - 1) * projectsPerPage
   const endIndex = startIndex + projectsPerPage
   const [projects,setprojects] = useState<Project[]>([])
-  const paginatedProjects = projects.slice(startIndex, endIndex)
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -53,9 +51,7 @@ export default function TeamProjects({ teamId, currentPage }: { teamId: string, 
           return
         }
         const {data}= await axios.get("/api/project/get-all-Project_byID", { params: { teamId: teamId } })
-        console.log(data)
         setprojects(data)
-        // console.log(data.projects)
         
       } catch (error: any) {
         console.log(error)
