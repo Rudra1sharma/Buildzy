@@ -10,7 +10,7 @@ import { useAuth } from '@/context/AuthContext'
 
 const navItems = [
   { name: 'Dashboard', href: '/dashboard' },
-  { name: 'Canvas', href: '/canvas' },
+  { name: 'Studio', href: '/studio' },
   { name: 'Teams', href: '/teams' },
   { name: 'Gallery', href: '/gallery' },
 ]
