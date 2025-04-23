@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { ThemeToggle } from "../dashboard/themeToggle"
+import { signIn } from "next-auth/react"
 
 export default function LoginPage() {
     const { login, user } = useAuth();
@@ -25,37 +26,25 @@ export default function LoginPage() {
         router.push('/dashboard')
     }
 
-    const handleGithub = async()=>{
-        try {
-            const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
-            const redirectUri = process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI;
-            const scope = "read:user,repo";
-          
-            const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=user,repo}`;
-          
-            // Redirect the user to GitHub login
-            window.location.href = githubAuthUrl;
-        } catch (error) {
-            console.log(error)
-        }
+    const handleGithub = async(e: any)=>{
+        e.preventDefault();
+        const res = await signIn("github", {
+            callbackUrl: "/dashboard",
+            authType: "reauthenticate",
+            redirect: true
+          })
+        console.log(res)
     }
     const handlesubmit = async (e: any) => {
-        e.preventDefault()
-        setLoading(true)
-        try {
-            const response = await axios.post('/api/auth/login', formdata, {
-                headers: {
-                    "Content-Type": 'application/json',
-                },
-            })
-            login(response.data.user);
-            handleRedirect()
-        } catch (error: any) {
-            alert(error.response.data.error)
-        }
-        finally {
-            setLoading(false)
-        }
+        e.preventDefault();
+        const res  = await signIn("github")
+        console.log(res)
+        // const res = await signIn("Credentials", {
+        //     ...formdata,
+        //   });
+        //   console.log(res);
+        //   if (res?.ok) router.push("/dashboard");
+        //   else alert("Invalid credentials");
     }
 
     const handleChange = (e: any) => {

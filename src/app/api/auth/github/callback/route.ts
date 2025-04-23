@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
 
         //! Listen Rudra here save the user along with its access token in databaaase.
         //* Watch Out that the user object must have all the required keys
-        const redirectTo = new URL('/', req.url);
+        const redirectTo = new URL('/dashboard', req.url);
         return NextResponse.redirect(redirectTo);
     } catch (error: any) {
         console.log(error)
