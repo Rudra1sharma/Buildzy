@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/dashboard/themeToggle'
 import { useAuth } from '@/context/AuthContext'
+import { signOut, useSession } from 'next-auth/react'
 
 const navItems = [
   { name: 'Dashboard', href: '/dashboard' },
@@ -18,7 +19,8 @@ const navItems = [
 
 export default function DashboardHeader() {
   const pathname = usePathname()
-  const { user, logout } = useAuth()
+  const {data : session} = useSession();
+  const user = session?.user
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -54,7 +56,7 @@ export default function DashboardHeader() {
             <span className="sr-only">User profile</span>
           </Button>
           {user ? (
-            <Button variant="ghost" size="icon" onClick={logout}>
+            <Button variant="ghost" size="icon" onClick={()=>{signOut()}}>
               <LogOut className="h-5 w-5" />
               <span className="sr-only">Logout</span>
             </Button>

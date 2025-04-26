@@ -5,16 +5,14 @@ import ActivityFeed from '@/components/dashboard/activityFeed'
 import HelloUser from '@/components/dashboard/helloUser'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 
 export default function DashboardPage() {
-  const { isAuthenticated } = useAuth();
-  const router = useRouter()
-  console.log(isAuthenticated())
-  if(!isAuthenticated()){
-    router.push('/login')
-    return null;
-  }
+  const router = useRouter();
+  const {data : session, status, update} = useSession();
+  if(status == 'loading') return <>Loading...</>
+  console.log("session :", session);
   return (
     <div className="flex flex-col min-h-screen">
       <DashboardHeader />
