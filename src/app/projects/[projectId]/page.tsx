@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export default function ProjectDetails({ params }: { params: { projectId: string } }) {
     return (
         <div className="p-10">
@@ -13,4 +14,12 @@ export default function ProjectDetails({ params }: { params: { projectId: string
             </p>
         </div>
     );
+=======
+import RepoManager from "@/components/project/repoManager";
+
+export default function page(){
+    return <>
+    <RepoManager/>
+    </>
+>>>>>>> 60a98a37c6ba3d7774742ac0951c6e24274c9fc5
 }

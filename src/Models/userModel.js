@@ -8,25 +8,27 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
 
-    username: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-    },
-
     email: {
       type: String,
       required: true,
       unique: true,
       trim: true,
     },
-
-    password: {
+    image: {
       type: String,
       required: true,
+      unique: true,
+      trim: true,
     },
-
+    provider: {
+      type: String,
+      trim: true,
+    },
+    accessToken :{
+      type: String,
+      trim: true,
+      unique: true,
+    },
     teams: [
       {
         type: mongoose.Schema.Types.ObjectId,
