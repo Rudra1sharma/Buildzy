@@ -38,13 +38,6 @@ export default function LoginPage() {
     const handlesubmit = async (e: any) => {
         e.preventDefault();
         const res  = await signIn("github")
-        console.log(res)
-        // const res = await signIn("Credentials", {
-        //     ...formdata,
-        //   });
-        //   console.log(res);
-        //   if (res?.ok) router.push("/dashboard");
-        //   else alert("Invalid credentials");
     }
 
     const handleChange = (e: any) => {
