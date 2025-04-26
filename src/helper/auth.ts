@@ -21,6 +21,17 @@ export const authConfig: NextAuthOptions = {
                     scope: 'repo,user',
                 },
             },
+            profile(profile) {
+                return {
+                  id: profile.id,
+                  name: profile.name,
+                  email: profile.email,
+                  image: profile.avatar_url,
+                  username: profile.login,
+                  avatar_url: profile.avatar_url,
+
+                };
+              },
         }),
     ],
     callbacks: {
@@ -30,12 +41,16 @@ export const authConfig: NextAuthOptions = {
             }
             await connect()
             if (user) {
+                token.username = user.username
+                token.avatar_url = user.avatar_url
+                // token.username = user.username as string
                 const res = await User.findOne({ email: user.email })
-                console.log("resss",res)
+                // console.log("resss",res)
                 if (!res) {
                     console.log("userrrr",user)
                     const newUser = await User.create({
                         name: user.name,
+                        username: user.username,
                         email: user.email,
                         image: user.image,
                         accessToken: account?.access_token,
@@ -55,7 +70,9 @@ export const authConfig: NextAuthOptions = {
             session.user = {
                 ...session.user,
                 access_token: token.accessToken as string,
-                id: token.id as string,  // or add fallback
+                id: token.id as string, 
+                username : token.username as string,
+                avatar_url: token.avatar_url as string
             };
             return session;
         }

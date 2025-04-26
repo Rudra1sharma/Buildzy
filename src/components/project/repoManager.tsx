@@ -1,23 +1,52 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {Card,CardContent, CardDescription, CardFooter, CardHeader, CardTitle,} from "@/components/ui/card";
-import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, FolderOpen,FolderGit, GitCommit, PlusCircle, ExternalLink, ChevronRight, File, Pencil, FileCode, Settings, User, UserPlus, AlertCircle,} from "lucide-react";
+import { FileText, FolderOpen, FolderGit, GitCommit, PlusCircle, ExternalLink, ChevronRight, File, Pencil, FileCode, Settings, User, UserPlus, AlertCircle, } from "lucide-react";
 import DashboardHeader from "../dashboard/dashboardHeader";
-import { useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
+import axios from "axios";
+import { useParams, useSearchParams } from "next/navigation";
 
+type FilesType = {
+  name: string;
+  path: string;
+  type: string;
+}
+const mockCommits = [
+  {
+    hash: "a1b2c3d",
+    message: "Update home page design",
+    author: "JohnDoe",
+    date: "2 hours ago",
+  },
+  {
+    hash: "e4f5g6h",
+    message: "Fix contact form styling",
+    author: "JohnDoe",
+    date: "1 day ago",
+  },
+  {
+    hash: "i7j8k9l",
+    message: "Initial commit",
+    author: "JohnDoe",
+    date: "1 week ago",
+  },
+];
 export default function RepoManager() {
+  const query = useSearchParams();
+  const repoName = query.get("name") as string;
+  const { data: session } = useSession();
+  const [files, setFiles] = useState<FilesType[]>([]);
+  const [temp, setTemp] = useState(repoName);
   const [pageName, setPageName] = useState("");
   const [commitMessage, setCommitMessage] = useState("");
-  const [repoName, setRepoName] = useState("my-awesome-website");
   const [inviteEmail, setInviteEmail] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
-const {data: session} = useSession();
-console.log(session)
   // Mock contributors data
   const [contributors, setContributors] = useState([
     { id: 1, name: "You", email: "you@example.com", role: "Owner" },
@@ -29,36 +58,35 @@ console.log(session)
     },
   ]);
 
-  const mockFiles = [
-    { name: "index.html", type: "html", updatedAt: "2 hours ago" },
-    { name: "about.html", type: "html", updatedAt: "1 day ago" },
-    { name: "contact.html", type: "html", updatedAt: "3 days ago" },
-    { name: "styles.css", type: "css", updatedAt: "2 hours ago" },
-    { name: "about.css", type: "css", updatedAt: "1 day ago" },
-    { name: "custom.css", type: "css", updatedAt: "5 days ago" },
-    { name: "README.md", type: "other", updatedAt: "1 week ago" },
-  ];
 
-  const mockCommits = [
-    {
-      hash: "a1b2c3d",
-      message: "Update home page design",
-      author: "JohnDoe",
-      date: "2 hours ago",
-    },
-    {
-      hash: "e4f5g6h",
-      message: "Fix contact form styling",
-      author: "JohnDoe",
-      date: "1 day ago",
-    },
-    {
-      hash: "i7j8k9l",
-      message: "Initial commit",
-      author: "JohnDoe",
-      date: "1 week ago",
-    },
-  ];
+  const fetchRepoFiles = async (owner: string, repo: string, accessToken: string) => {
+    try {
+      console.log(owner, accessToken)
+      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          Accept: "application/vnd.github+json"
+        }
+      });
+
+      const files = await res.json();
+      const myfiles = files.map((file: any) => {
+        const extension = file.name.split('.').pop();
+        return {
+          name: file.name,
+          path: file.path,
+          type: extension
+        };
+      })
+      setFiles(myfiles)
+    } catch (error) {
+      console.error("Error fetching files:", error);
+    }
+  }
+  useEffect(() => {
+    fetchRepoFiles(session?.user?.username as string, repoName, session?.user?.access_token as string)
+  }, [session?.user?.username])
+
 
   const handleSaveRepoName = () => {
     // Here you would implement the GitHub API call to update repo name
@@ -74,26 +102,45 @@ console.log(session)
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 3000);
   };
-  const createRepo = async(accessToken: any)=>{
-    const res = await fetch("https://api.github.com/user/repos", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      Accept: "application/vnd.github+json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: repoName,
-      description: "Created via Buildzy using GitHub OAuth!",
-      private: false,
-    }),
-  });
-  const data = await res.json();
+  const createRepo = async (accessToken: any) => {
+    try {
+      const res = await fetch("https://api.github.com/user/repos", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          Accept: "application/vnd.github+json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: temp,
+          description: "Created with 💝 by Buildzy using GitHub OAuth!",
+          private: false,
+        }),
+      });
 
-  if (!res.ok) {
-    throw new Error(data.message || "Failed to create repository");
-  }
-  console.log(res)
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message);
+        throw new Error(data.message || "Failed to create repository");
+      }
+
+      const payload = {
+        create_at: data.created_at || new Date().toISOString(),
+        description: data.description,
+        full_name: data.full_name,
+        github_id: data.id,
+        name: data.name,
+        owner: session?.user?.username || "unknown",
+        owner_id: session?.user?.id || "unknown",
+      };
+
+      await axios.post('http://localhost:3000/api/project/createrepo', payload);
+      alert("Creating Repository Successfully");
+
+    } catch (error: any) {
+      console.error("Error creating repo or saving project:", error.message);
+    }
   }
   return (
     <div className="container">
@@ -112,7 +159,7 @@ console.log(session)
           <CardContent>
             <ScrollArea className="h-[60vh]">
               <div className="space-y-1">
-                {mockFiles.map((file) => (
+                {files.map((file) => (
                   <div
                     key={file.name}
                     className="flex items-center justify-between rounded-md p-2 hover:bg-muted cursor-pointer"
@@ -128,7 +175,6 @@ console.log(session)
                       <span>{file.name}</span>
                     </div>
                     <div className="flex items-center text-sm text-muted-foreground">
-                      <span className="mr-2">{file.updatedAt}</span>
                       <Button variant="ghost" size="icon" className="h-8 w-8">
                         <Pencil className="h-4 w-4" />
                       </Button>
@@ -170,15 +216,15 @@ console.log(session)
                         Your repository name
                       </label>
                       <Input
-                        value={repoName}
-                        onChange={(e: any) => setRepoName(e.target.value)}
+                        value={temp}
+                        onChange={(e: any) =>setTemp(e.target.value)}
                         placeholder="Your Repo"
                         className="mt-1"
                       />
                     </div>
                     <DialogFooter>
                       <Button variant="secondary" type="submit">Cancel</Button>
-                      <Button type="submit" onClick={()=>{
+                      <Button type="submit" onClick={() => {
                         createRepo(session?.user?.access_token)
                       }}>Create</Button>
                     </DialogFooter>
@@ -208,7 +254,7 @@ console.log(session)
                         placeholder="Update website design"
                         className="mt-1"
                       />
-                      </div>
+                    </div>
                     <DialogFooter>
                       <Button variant="outline">Cancel</Button>
                       <Button>Commit</Button>
@@ -326,8 +372,8 @@ console.log(session)
                           </label>
                           <div className="flex gap-2 mt-1">
                             <Input
-                              value={repoName}
-                              onChange={(e) => setRepoName(e.target.value)}
+                              value={temp}
+                              onChange={(e) => setTemp(e.target.value)}
                               placeholder="my-awesome-website"
                             />
                             <Button onClick={handleSaveRepoName}>Save</Button>

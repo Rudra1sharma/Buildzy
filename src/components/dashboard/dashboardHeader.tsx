@@ -12,8 +12,6 @@ import { signOut, useSession } from 'next-auth/react'
 const navItems = [
   { name: 'Dashboard', href: '/dashboard' },
   { name: 'Studio', href: '/studio' },
-  { name: 'Teams', href: '/teams' },
-  { name: 'Gallery', href: '/gallery' },
   { name: 'Projects', href: '/projects'} // project ka
 ]
 
