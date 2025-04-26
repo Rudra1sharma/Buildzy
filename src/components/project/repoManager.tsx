@@ -372,8 +372,8 @@ export default function RepoManager() {
                           </label>
                           <div className="flex gap-2 mt-1">
                             <Input
-                              value={repoName}
-                              onChange={(e) => setRepoName(e.target.value)}
+                              value={temp}
+                              onChange={(e) => setTemp(e.target.value)}
                               placeholder="my-awesome-website"
                             />
                             <Button onClick={handleSaveRepoName}>Save</Button>
