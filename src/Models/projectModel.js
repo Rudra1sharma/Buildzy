@@ -1,40 +1,5 @@
-// import mongoose, { Mongoose } from "mongoose";
-
-// const projectSchema = new mongoose.Schema({
-//     name: {
-//         type: String,
-//         required: true
-//     },
-
-//     owner: {
-//         type: mongoose.Schema.Types.ObjectId,
-//         ref: 'User',
-//     },
-
-//     teamId: {
-//         type: mongoose.Schema.Types.ObjectId,
-//         ref: 'Team'
-//     },
-
-//     description: {
-//         type: String
-//     },
-    
-//     canvas: [{
-//         type: mongoose.Schema.Types.ObjectId,
-//         ref: 'Canvas'
-//     }],
-// },
-//     {
-//         timestamps: true,
-//     }
-// );
-
-// const Project = mongoose.models.Project || mongoose.model("Project", projectSchema);
-
-// export default Project;
-
 import mongoose from "mongoose";
+import { stringify } from "querystring";
 
 const projectSchema = new mongoose.Schema(
   {
@@ -42,32 +7,29 @@ const projectSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-
-    owner: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    },
-
-    teamId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Team'
-    },
-
-    description: {
-      type: String
-    },
-
-    // GitHub Repo URL
-    repo: {
+    owner:{
       type: String,
       required: true
     },
-
-    // Number of team members (default to 1)
-    members: {
-      type: Number,
-      default: 1
+    owner_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
     },
+    description: {
+      type: String
+    },
+    create_at:{
+      type: Date
+    },
+    full_name:{
+      type: String,
+      trim: true
+    },
+    github_id:{
+      type: String,
+      required: true,
+      trim: true
+    }
   },
   {
     timestamps: true,

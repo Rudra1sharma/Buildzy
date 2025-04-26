@@ -11,7 +11,7 @@ export default function HelloUser() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center">
-          {`Hi, ${user?.name}`}
+          {`Hi, ${user?.username}`}
         </CardTitle>
         <CardDescription>Welcome back, {user?.name}</CardDescription>
       </CardHeader>

@@ -8,10 +8,14 @@ declare module "next-auth" {
       email?: string | null;
       image?: string | null;
       access_token?: string | null; 
+      username?: string | null;
+      avatar_url?: string | null;
     };
   }
 
   interface User extends DefaultUser {
     access_token?: string;
+    username?: string;
+    avatar_url?: string;
   }
 }
