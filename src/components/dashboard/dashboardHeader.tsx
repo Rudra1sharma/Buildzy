@@ -13,6 +13,7 @@ const navItems = [
   { name: 'Studio', href: '/studio' },
   { name: 'Teams', href: '/teams' },
   { name: 'Gallery', href: '/gallery' },
+  { name: 'Projects', href: '/projects'} // project ka
 ]
 
 export default function DashboardHeader() {
