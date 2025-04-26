@@ -34,7 +34,7 @@ const dummyProjects = [
         id: '3', name: 'E-commerce Site', description: 'Full-stack shopping platform with cart and checkout.',
         repo: 'https://github.com/user/ecommerce', techStack: ['Next.js', 'MongoDB', 'Stripe'], members: 3
     },
-    
+
     {
         id: '4', name: 'Blog Platform', description: 'A Markdown-based blog site with user authentication.',
         repo: 'https://github.com/user/blog-platform', techStack: ['Next.js', 'Prisma', 'PostgreSQL'], members: 2
@@ -95,7 +95,7 @@ export default function ProjectsPage() {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Your Projects</h1>
                 <motion.button
-                    
+
                     // onClick={handleCreateRepo}
 
                     whileHover={{ scale: 1.05 }}
