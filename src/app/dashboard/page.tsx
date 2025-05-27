@@ -3,18 +3,27 @@ import DashboardHeader from '@/components/dashboard/dashboardHeader'
 import ProjectsOverview from '@/components/dashboard/projectsOverview'
 import ActivityFeed from '@/components/dashboard/activityFeed'
 import HelloUser from '@/components/dashboard/helloUser'
-import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { Spinner } from '@/components/ui/spinner'
+import { useEffect } from 'react'
 
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
+  const router = useRouter();
+  
+  useEffect(() => {
+    if (status === "loading") return;
+    if (!session) {
+      router.push("/login");
+    }
+  }, [session, status, router]);
   if (status === 'loading') {
     return (
-      <Spinner
-        size="large" />
+      <div className="flex justify-center items-center h-screen w-full">
+        <Spinner size="large" />
+      </div>
     )
   }
   return (
