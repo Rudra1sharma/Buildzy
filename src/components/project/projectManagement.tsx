@@ -120,51 +120,6 @@ export default function ProjectManagementSection({
                 <div className="flex flex-col sm:flex-row justify-between gap-4">
                     <CardTitle className="text-lg md:text-xl">Project Management</CardTitle>
                     <div className="flex flex-wrap gap-2">
-                        <Dialog>
-                            <DialogTrigger asChild>
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-md">
-                                <DialogHeader>
-                                    <DialogTitle>Create Repository</DialogTitle>
-                                    <DialogDescription>
-                                        What should be your new repository name?
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <div>
-                                    <label className="text-sm font-medium">
-                                        Your repository name
-                                    </label>
-                                    <Input
-                                        value={temp}
-                                        onChange={(e) => {
-                                            setTemp(e.target.value);
-                                            validateForm('repoName', e.target.value);
-                                        }}
-                                        placeholder="Your Repo"
-                                        className={`mt-1 ${formErrors.repoName ? "border-red-500" : ""}`}
-                                    />
-                                    {formErrors.repoName && (
-                                        <p className="text-xs text-red-500 mt-1">Repository name cannot be empty</p>
-                                    )}
-                                </div>
-                                <DialogFooter>
-                                    <Button variant="secondary" disabled={isCreatingRepo}>Cancel</Button>
-                                    <Button
-                                        onClick={() => createRepo(session?.user?.access_token)}
-                                        disabled={isCreatingRepo || formErrors.repoName}
-                                    >
-                                        {isCreatingRepo ? (
-                                            <>
-                                                <Spinner size="small" className="mr-2" />
-                                                Creating...
-                                            </>
-                                        ) : (
-                                            "Create"
-                                        )}
-                                    </Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
                         <Dialog open={isCommitDialogOpen} onOpenChange={setIsCommitDialogOpen}>
                             <DialogTrigger asChild>
                                 <Button>

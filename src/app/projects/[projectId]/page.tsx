@@ -89,9 +89,9 @@ export default function RepoManager() {
         }
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch repository files");
-      }
+      // if (!res.ok) {
+      //   throw new Error("Failed to fetch repository files");
+      // }
       const files = await res.json();
       const myfiles = files.map((file: any) => {
         const extension = file.name.split('.').pop();
