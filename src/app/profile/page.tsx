@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useSession } from "next-auth/react"
 import DashboardHeader from '@/components/dashboard/dashboardHeader'
+import { Spinner } from "@/components/ui/spinner"
 
 interface UserData {
     name: string
@@ -26,46 +27,27 @@ export default function ProfilePage() {
     const [isEditing, setIsEditing] = useState(false)
     const [loading, setLoading] = useState(true)
     const [userData, setUserData] = useState<UserData>({
-        name: session?.user?.name || "John Doe",
-        username: "johndoe123",
-        email: session?.user?.email || "john@example.com",
-        image: session?.user?.image || "/placeholder.svg?height=120&width=120",
-        provider: "google",
+        name: session?.user?.name as string,
+        username:session?.user?.username as string,
+        email: session?.user?.email as string,
+        image: session?.user?.image as string,
+        provider: "Github",
         projectsCount: 0,
         memberSince: "January 2024",
     })
 
     useEffect(() => {
-        const userId = session?.user?.id ?? ""
-
-        if (!userId) return
-
-        const fetchUser = async () => {
-            try {
-                const res = await fetch(`/api/userByID?id=${userId}`)
-                if (!res.ok) throw new Error("Failed to fetch user data")
-
-                const user = await res.json()
-
-                setUserData({
-                    name: user.name ?? userData.name,
-                    username: user.username ?? userData.username,
-                    email: user.email ?? userData.email,
-                    image: user.image ?? userData.image,
-                    provider: user.provider ?? userData.provider,
-                    projectsCount: user.projects ? user.projects.length : 0,
-                    memberSince: user.createdAt
-                        ? new Date(user.createdAt).toLocaleString("default", { month: "long", year: "numeric" })
-                        : userData.memberSince,
-                })
-            } catch (error) {
-                console.error("Error fetching user data:", error)
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        fetchUser()
+        setLoading(true)
+        setUserData({
+        name: session?.user?.name as string,
+        username:session?.user?.username as string,
+        email: session?.user?.email as string,
+        image: session?.user?.image as string,
+        provider: "Github",
+        projectsCount: 0,
+        memberSince: "January 2024",
+    })
+        setLoading(false)
     }, [session])
 
     const stats = [
@@ -90,9 +72,7 @@ export default function ProfilePage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <p className="text-lg text-slate-600 dark:text-slate-300">Loading profile...</p>
-            </div>
+            <Spinner size={'large'} className="mt-[25%]"/>
         )
     }
 
@@ -120,10 +100,7 @@ export default function ProfilePage() {
                                     <Avatar className="w-32 h-32 border-4 border-white shadow-xl">
                                         <AvatarImage src={userData.image || "/placeholder.svg"} alt={userData.name} />
                                         <AvatarFallback className="text-2xl bg-gradient-to-br from-blue-500 to-purple-600 text-white">
-                                            {userData.name
-                                                .split(" ")
-                                                .map((n) => n[0])
-                                                .join("")}
+                                            {userData.name}
                                         </AvatarFallback>
                                     </Avatar>
                                     <motion.div

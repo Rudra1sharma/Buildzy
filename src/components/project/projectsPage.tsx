@@ -8,124 +8,131 @@ import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiPlus, FiUsers, FiStar } from 'react-icons/fi';
 import {
-    SiReact, SiTailwindcss, SiSocketdotio, SiMongodb, SiCss3 , SiJavascript, SiHtml5
+    SiReact, SiTailwindcss, SiSocketdotio, SiMongodb, SiCss3, SiJavascript, SiHtml5
 } from 'react-icons/si';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Spinner } from '../ui/spinner';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 
-const techIcons = { 'CSS' : <SiCss3/>, 'Javascript': <SiJavascript/>, 'HTML5': <SiHtml5/>
+const techIcons = {
+    'CSS': <SiCss3 />, 'Javascript': <SiJavascript />, 'HTML5': <SiHtml5 />
 };
 
-const dummyProjects = [
-    {
-        id: '1', name: 'Portfolio Website', description: 'A sleek personal website built with React and Tailwind.',
-        repo: 'https://github.com/user/portfolio', techStack: ['HTML5', 'CSS', 'Javascript'], members: 1
-    },
-    {
-        id: '2', name: 'Chat App', description: 'Real-time chat app using Socket.IO and MongoDB.',
-        repo: 'https://github.com/user/chat-app', techStack: ['HTML5', 'CSS', 'Javascript'], members: 4
-    },
-    {
-        id: '3', name: 'E-commerce Site', description: 'Full-stack shopping platform with cart and checkout.',
-        repo: 'https://github.com/user/ecommerce', techStack: ['HTML5', 'CSS', 'Javascript'], members: 3
-    },
-    {
-        id: '4', name: 'Blog Platform', description: 'A Markdown-based blog site with user authentication.',
-        repo: 'https://github.com/user/blog-platform', techStack: ['HTML5', 'CSS', 'Javascript'], members: 2
-    }
-];
+interface ProjectProps {
+    id: string;
+    name: string;
+    description: string;
+    repo: string;
+    members: number;
+    techStack: string[];
+}
 
 export default function ProjectsPage() {
-    const {data: session , status} = useSession();
+    const { data: session, status } = useSession()
     const router = useRouter();
-    const [favorites, setFavorites] = useState<string[]>([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [temp, setTemp] = useState('');
+    const [project, setProject] = useState<ProjectProps[]>([]);
+    const [loading, setLoading] = useState(true);
     const [formErrors, setFormErrors] = useState<{ repoName?: boolean }>({});
     const [isCreatingRepo, setIsCreatingRepo] = useState(false);
-
-    const toggleFavorite = (id: string) => {
-        setFavorites(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]);
-    };
 
     const openRepo = (repoUrl: string) => {
         window.open(repoUrl, '_blank');
     };
-
+    useEffect(() => {
+        fetchRepos();
+    }, [])
+    const fetchRepos = async () => {
+        const userid = session?.user?.id
+        const gitid = session?.user?.username
+        setLoading(true)
+        try {
+            const res = await fetch(`http://localhost:3000/api/project/getrepo?userId=${userid}&gitid=${gitid}`)
+            const data = await res.json();
+            const proj = data.map((project: any) => ({
+                ...project,
+                techStack: ['HTML5', 'CSS', 'Javascript']
+            }))
+            setProject(proj)
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setLoading(false)
+        }
+    }
     const validateForm = (field: string, value: string) => {
         let isValid = true;
-    
+
         switch (field) {
-          case 'repoName':
-            isValid = value.trim() !== '';
-            setFormErrors(prev => ({ ...prev, repoName: !isValid }));
-            break;
-          case 'commitMessage':
-            isValid = value.trim() !== '';
-            setFormErrors(prev => ({ ...prev, commitMessage: !isValid }));
-            break;
-          case 'pageName':
-            isValid = value.trim() !== '';
-            setFormErrors(prev => ({ ...prev, pageName: !isValid }));
-            break;
-          case 'fileName':
-            isValid = value.trim() !== '';
-            setFormErrors(prev => ({ ...prev, fileName: !isValid }));
-            break;
-          case 'inviteEmail':
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            isValid = emailRegex.test(value);
-            setFormErrors(prev => ({ ...prev, inviteEmail: !isValid }));
-            break;
+            case 'repoName':
+                isValid = value.trim() !== '';
+                setFormErrors(prev => ({ ...prev, repoName: !isValid }));
+                break;
+            case 'commitMessage':
+                isValid = value.trim() !== '';
+                setFormErrors(prev => ({ ...prev, commitMessage: !isValid }));
+                break;
+            case 'pageName':
+                isValid = value.trim() !== '';
+                setFormErrors(prev => ({ ...prev, pageName: !isValid }));
+                break;
+            case 'fileName':
+                isValid = value.trim() !== '';
+                setFormErrors(prev => ({ ...prev, fileName: !isValid }));
+                break;
+            case 'inviteEmail':
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                isValid = emailRegex.test(value);
+                setFormErrors(prev => ({ ...prev, inviteEmail: !isValid }));
+                break;
         }
-    
+
         return isValid;
-      };
+    };
     const createRepo = async (accessToken: any) => {
         if (!validateForm('repoName', temp)) return;
-    
+
         setIsCreatingRepo(true);
         try {
-          const res = await fetch("https://api.github.com/user/repos", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              Accept: "application/vnd.github+json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name: temp,
-              description: "Created with 💝 by Buildzy using GitHub OAuth!",
-              private: false,
-            }),
-          });
-    
-          const data = await res.json();
-          if (!res.ok) {
-            throw new Error(data.message || "Failed to create repository");
-          }
-    
-          const payload = {
-            create_at: data.created_at || new Date().toISOString(),
-            description: data.description,
-            full_name: data.full_name,
-            github_id: data.id,
-            name: data.name,
-            owner: session?.user?.username || "unknown",
-            owner_id: session?.user?.id || "unknown",
-          };
-    
-          const ress = await axios.post('http://localhost:3000/api/project/createrepo', payload);
-        //   console.log(ress)
-          setIsDialogOpen(false)
+            const res = await fetch("https://api.github.com/user/repos", {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    Accept: "application/vnd.github+json",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: temp,
+                    description: "Created with 💝 by Buildzy using GitHub OAuth!",
+                    private: false,
+                }),
+            });
+
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error(data.message || "Failed to create repository");
+            }
+
+            const payload = {
+                create_at: data.created_at || new Date().toISOString(),
+                description: data.description,
+                full_name: data.full_name,
+                github_id: data.id,
+                name: data.name,
+                owner: session?.user?.username || "unknown",
+                owner_id: session?.user?.id || "unknown",
+            };
+
+            const ress = await axios.post('http://localhost:3000/api/project/createrepo', payload);
+            setIsDialogOpen(false)
         } catch (error: any) {
             console.error("Error creating repo or saving project:", error.message);
         } finally {
-          setIsCreatingRepo(false);
+            setIsCreatingRepo(false);
         }
-      };
+    };
 
     return (
         <div className='w-full'>
@@ -183,7 +190,6 @@ export default function ProjectsPage() {
                                     {isCreatingRepo ? (
                                         <>
                                             <Spinner size="small" className="mr-2" />
-                                            Creating...
                                         </>
                                     ) : (
                                         "Create"
@@ -194,9 +200,19 @@ export default function ProjectsPage() {
                     </Dialog>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {loading ? (
+                    <div className="flex justify-center items-center w-full py-20">
+                        <Spinner size="small" className="mr-2" />
+                    </div>
+                ) : (<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <AnimatePresence>
-                        {dummyProjects.map((project) => (
+                        {project.length === 0 ? (
+                            <div className="flex justify-center items-center w-full py-20 text-center">
+                                <span className="text-gray-500 dark:text-gray-300 text-lg">
+                                    No projects found yet. Create a new one to get started!
+                                </span>
+                            </div>
+                        ) : (project.map((project) => (
                             <motion.div
                                 key={project.id}
                                 className="cursor-pointer"
@@ -214,15 +230,6 @@ export default function ProjectsPage() {
                                             <FiUsers className="text-gray-600" />
                                             <span>{project.members} {project.members === 1 ? 'member' : 'members'}</span>
                                         </div>
-                                        <button
-                                            className={`text-xl ${favorites.includes(project.id) ? 'text-yellow-400' : 'text-gray-400 hover:text-yellow-400'}`}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                toggleFavorite(project.id);
-                                            }}
-                                        >
-                                            <FiStar />
-                                        </button>
                                     </div>
 
                                     <div>
@@ -246,7 +253,7 @@ export default function ProjectsPage() {
                                             className="text-sm dark:border-gray-500 dark:text-white dark:hover:bg-gray-700"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                router.push(`/projects/${project.id}`);
+                                                router.push(`/projects/${project.id}?name=${project.name}`);
                                             }}
                                         >
                                             View Details
@@ -263,9 +270,9 @@ export default function ProjectsPage() {
                                     </div>
                                 </Card>
                             </motion.div>
-                        ))}
+                        )))}
                     </AnimatePresence>
-                </div>
+                </div>)}
             </motion.div>
         </div>
     );
