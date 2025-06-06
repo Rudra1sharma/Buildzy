@@ -9,8 +9,6 @@ import { ThemeToggle } from "@/components/dashboard/themeToggle"
 import { signOut, useSession } from "next-auth/react"
 
 const navItems = [
-  { name: "Dashboard", href: "/dashboard" },
-  { name: "Builder", href: "/builder" },
   { name: "Projects", href: "/projects" },
 ]
 

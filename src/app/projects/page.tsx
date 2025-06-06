@@ -10,6 +10,7 @@ export default function page() {
     const router = useRouter()
     useEffect(() => {
         if (status === "loading") return;
+        // console.log("projects:", session)
         if (!session) {
             router.push("/login");
         }

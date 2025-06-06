@@ -16,7 +16,6 @@ import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import { Spinner } from "../ui/spinner";
 
-// import { toast } from "@/components/ui/use-toast";
 
 type FilesType = {
   name: string;
@@ -348,7 +347,6 @@ export default function RepoManager() {
               {isLoading ? (
                 <div className="flex flex-col items-center justify-center h-40">
                   <Spinner size="medium" />
-                  <p className="mt-2 text-sm text-muted-foreground">Loading files...</p>
                 </div>
               ) : files.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
@@ -432,7 +430,6 @@ export default function RepoManager() {
                     {isCreatingFile ? (
                       <>
                         <Spinner size="small" className="mr-2" />
-                        Creating...
                       </>
                     ) : (
                       "Create File"
@@ -490,7 +487,6 @@ export default function RepoManager() {
                         {isCreatingRepo ? (
                           <>
                             <Spinner size="small" className="mr-2" />
-                            Creating...
                           </>
                         ) : (
                           "Create"
@@ -538,7 +534,6 @@ export default function RepoManager() {
                         {isCommitting ? (
                           <>
                             <Spinner size="small" className="mr-2" />
-                            Committing...
                           </>
                         ) : (
                           "Commit"
@@ -591,7 +586,6 @@ export default function RepoManager() {
                         {isCreatingPage ? (
                           <>
                             <Spinner size="small" className="mr-2" />
-                            Creating...
                           </>
                         ) : (
                           "Create & Edit"
@@ -693,7 +687,6 @@ export default function RepoManager() {
                               {isSavingRepoName ? (
                                 <>
                                   <Spinner size="small" className="mr-2" />
-                                  Saving...
                                 </>
                               ) : (
                                 "Save"

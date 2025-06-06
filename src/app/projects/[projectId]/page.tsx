@@ -39,7 +39,6 @@ export default function RepoManager() {
   const [inviteEmail, setInviteEmail] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [mockCommits, setMockCommits] = useState<CommitType[]>([]);
-  // Loading states
   const [isLoading, setIsLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(true);
   const [isCreatingRepo, setIsCreatingRepo] = useState(false);
@@ -57,8 +56,6 @@ export default function RepoManager() {
     fileName: false,
     inviteEmail: false
   });
-
-  // Mock contributors data
   const [contributors, setContributors] = useState([
     { id: 1, name: "You", email: "you@example.com", role: "Owner" },
     {
@@ -88,10 +85,6 @@ export default function RepoManager() {
           Accept: "application/vnd.github+json"
         }
       });
-
-      // if (!res.ok) {
-      //   throw new Error("Failed to fetch repository files");
-      // }
       const files = await res.json();
       const myfiles = files.map((file: any) => {
         const extension = file.name.split('.').pop();

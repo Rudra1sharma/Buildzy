@@ -62,27 +62,6 @@ interface ProjectManagementSectionProps {
     contributors: any[];
 }
 
-// const mockCommits = [
-//     {
-//         hash: "a1b2c3d4",
-//         message: "Initial commit with project setup",
-//         author: "You",
-//         date: "2 days ago",
-//     },
-//     {
-//         hash: "e5f6g7h8",
-//         message: "Added homepage content",
-//         author: "Collaborator",
-//         date: "1 day ago",
-//     },
-//     {
-//         hash: "i9j0k1l2",
-//         message: "Fixed styling issues",
-//         author: "You",
-//         date: "5 hours ago",
-//     },
-// ];
-
 export default function ProjectManagementSection({
     mockCommits,
     repoName,
@@ -161,7 +140,6 @@ export default function ProjectManagementSection({
                                         {isCommitting ? (
                                             <>
                                                 <Spinner size="small" className="mr-2" />
-                                                Committing...
                                             </>
                                         ) : (
                                             "Commit"
@@ -214,7 +192,6 @@ export default function ProjectManagementSection({
                                         {isCreatingPage ? (
                                             <>
                                                 <Spinner size="small" className="mr-2" />
-                                                Creating...
                                             </>
                                         ) : (
                                             "Create & Edit"
@@ -327,7 +304,6 @@ export default function ProjectManagementSection({
                                                     {isSavingRepoName ? (
                                                         <>
                                                             <Spinner size="small" className="mr-2" />
-                                                            Saving...
                                                         </>
                                                     ) : (
                                                         "Save"
