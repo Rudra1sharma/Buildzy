@@ -94,7 +94,6 @@ export default function ProjectManagementSection({
     contributors
 }: ProjectManagementSectionProps) {
     const { data: session } = useSession();
-    console.log(mockCommits)
     return (
         <Card className="lg:col-span-2">
             <CardHeader>
@@ -360,26 +359,17 @@ export default function ProjectManagementSection({
                                                             <User className="h-4 w-4 text-blue-500 flex-shrink-0" />
                                                             <div className="overflow-hidden">
                                                                 <div className="font-medium truncate">
-                                                                    {contributor.name}
+                                                                    {contributor.username}
                                                                 </div>
-                                                                <div className="text-xs text-muted-foreground truncate">
+                                                                {/* <div className="text-xs text-muted-foreground truncate">
                                                                     {contributor.email}
-                                                                </div>
+                                                                </div> */}
                                                             </div>
                                                         </div>
                                                         <div className="flex items-center gap-2 self-end sm:self-auto">
                                                             <span className="text-xs bg-muted px-2 py-1 rounded-full">
-                                                                {contributor.role}
+                                                                {(contributor.role === 'write'? "Contributor" : "Owner")}
                                                             </span>
-                                                            {contributor.role !== "Owner" && (
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="icon"
-                                                                    className="h-6 w-6"
-                                                                >
-                                                                    <ChevronRight className="h-4 w-4" />
-                                                                </Button>
-                                                            )}
                                                         </div>
                                                     </div>
                                                 ))}

@@ -20,6 +20,7 @@ const techIcons = {
 };
 
 interface ProjectProps {
+    mongoId: string;
     id: string;
     name: string;
     description: string;
@@ -55,6 +56,7 @@ export default function ProjectsPage() {
                 ...project,
                 techStack: ['HTML5', 'CSS', 'Javascript']
             }))
+            console.log(proj)
             setProject(proj)
         } catch (error) {
             console.error(error)
@@ -253,7 +255,7 @@ export default function ProjectsPage() {
                                             className="text-sm dark:border-gray-500 dark:text-white dark:hover:bg-gray-700"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                router.push(`/projects/${project.id}?name=${project.name}`);
+                                                router.push(`/projects/${project.id}?name=${project.name}&refrence=${project.mongoId}`);
                                             }}
                                         >
                                             View Details
