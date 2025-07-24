@@ -31,6 +31,7 @@ interface NewFileType {
 export default function RepoManager() {
   const query = useSearchParams();
   const repoName = query.get("name") as string;
+  const projectId = query.get("refrence") as string;
   const { data: session, status } = useSession();
   const [files, setFiles] = useState<FilesType[]>([]);
   const [temp, setTemp] = useState(repoName);
@@ -121,11 +122,6 @@ export default function RepoManager() {
           },
         }
       );
-
-      if (!res.ok) {
-        throw new Error(`GitHub API error: ${res.status}`);
-      }
-
       const commits = await res.json();
       const myCommits = commits.map((commit: any) => {
         return {
@@ -143,12 +139,30 @@ export default function RepoManager() {
       setIsFetching(false);
     }
   };
-
+  const fetchCollaborators = async () => {
+    try {
+      const res2 = await fetch(`https://api.github.com/repos/${session?.user?.username}/${repoName}/collaborators`, {
+        headers: {
+          Authorization: `Bearer ${session?.user?.access_token}`,
+          Accept: "application/vnd.github+json"
+        }
+      });
+      const data = await res2.json();
+      const collaborators = data.map((data: any) => {
+        return { id: data.id, username: data.login, role: data.role_name, avatar_url: data.avatar_url }
+      })
+      setContributors(collaborators)
+      console.log(collaborators)
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   useEffect(() => {
     if (session?.user?.username && repoName && session?.user?.access_token) {
       fetchRepoFiles(session.user.username, repoName, session.user.access_token);
       fetchCommit(session.user.username, repoName, session.user.access_token);
+      fetchCollaborators();
     } else if (status !== "loading") {
       setIsLoading(false);
       setIsFetching(false)
@@ -244,16 +258,28 @@ export default function RepoManager() {
 
   const handleInviteContributor = async () => {
     if (!validateForm('inviteEmail', inviteEmail)) return;
-
     setIsInviting(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setInviteEmail("");
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 3000);
+      //! put the github call to the backend part for atomicity transaction
+      const response = await axios.post("http://localhost:3000/api/invitation/sendInvite", { collaboratorEmail: inviteEmail, projectId: projectId })
+      const invitedUsername = response.data.username
+      if (response && response.status === 202) {
+        alert(response.data.message)
+      }
+      const res = await fetch(`https://api.github.com/repos/${session?.user?.username}/${repoName}/collaborators/${invitedUsername}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `token ${session?.user?.access_token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/vnd.github.v3+json',
+        },
+        body: JSON.stringify({ permission: 'push' }),
+      });
+
     } catch (error) {
       console.error(error);
     } finally {
+      setInviteEmail("");
       setIsInviting(false);
     }
   };
@@ -303,6 +329,9 @@ export default function RepoManager() {
         cssContent,
         `Add ${pageName}${'.css'}`
       );
+      if (session?.user?.username && repoName && session?.user?.access_token) {
+        fetchRepoFiles(session.user.username, repoName, session.user.access_token);
+      }
       setPageName("");
       setIsCreatePageDialogOpen(false);
     } catch (error) {
@@ -312,7 +341,6 @@ export default function RepoManager() {
     }
   };
   const createFileInRepo = async (access_token: any, username: any, repoName: string, filePath: string, content: string, message: string) => {
-    // console.log({ access_token, username, repoName, filePath, content, message })
     try {
       const response = await fetch(`https://api.github.com/repos/${username}/${repoName}/contents/${filePath}`, {
         method: 'PUT',
@@ -410,7 +438,7 @@ export default function RepoManager() {
 
         <ProjectManagementSection
           repoName={repoName}
-          mockCommits = {mockCommits}
+          mockCommits={mockCommits}
           isFetching={isFetching}
           temp={temp}
           setTemp={setTemp}

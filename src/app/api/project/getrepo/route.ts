@@ -47,11 +47,12 @@ export async function GET(req: NextRequest, res: NextResponse) {
                 const data = await res.json()
                 const data2 = await res2.json()
                 return {
+                    mongoId: project.id,
                     id: data.id,
                     name: data.name,
                     description: data.description,
                     repo: data.html_url,
-                    members: data2.length
+                    members: data2.length,
                 }
             })
         )
