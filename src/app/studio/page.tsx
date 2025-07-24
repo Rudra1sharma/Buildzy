@@ -43,7 +43,7 @@ function App() {
                 padding={['40', '40', '40', '40']}
                 custom={{ displayName: 'App' }}
               >
-                {/* <Element
+                <Element
                   canvas
                   is={Container}
                   flexDirection="row"
@@ -356,7 +356,7 @@ function App() {
                       />
                     </Element>
                   </Element>
-                </Element> */}
+                </Element>
               </Element>
             </Frame>
           </Viewport>
