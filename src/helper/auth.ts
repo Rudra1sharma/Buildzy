@@ -22,7 +22,7 @@ export const authConfig: NextAuthOptions = {
                 },
             },
             profile(profile) {
-                console.log(profile)
+                // console.log(profile)
                 return {
                   id: profile.id,
                   name: profile.name || profile.login,
@@ -44,11 +44,8 @@ export const authConfig: NextAuthOptions = {
             if (user) {
                 token.username = user.username
                 token.avatar_url = user.avatar_url
-                // token.username = user.username as string
                 const res = await User.findOne({ email: user.email })
-                // console.log("resss",res)
                 if (!res) {
-                    // console.log("userrrr",token)
                     const newUser = await User.create({
                         name: user.name,
                         username: user.username,
