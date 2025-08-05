@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/studio/components/editor/Viewport/Header.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/studio/components/editor/Viewport/Header.tsx", "src/app/api/socket/route.jjs"],
   "exclude": ["node_modules"]
 }
