@@ -14,11 +14,11 @@ export default function App() {
   const socketRef = useRef<Socket | null>(null);
   const editorRef = useRef<any>(null);
   const lastChangeRef = useRef<string>('');
-
+  const filepath = Array.isArray(params.filepath) ? params.filepath.join('/') : params.filepath;
   const debouncedSave = useCallback(
     debounce(async (projectData: any) => {
       try {
-        const response = await fetch(`/api/editor/${params.editorId}`, {
+        const response = await fetch(`/api/editor/${filepath}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -38,8 +38,25 @@ export default function App() {
         console.error('Error saving editor data:', error);
       }
     }, 1000),
-    [params.editorId, session?.user?.id]
+    [filepath, session?.user?.id]
   );
+
+  const handleSave = async () => {
+    if (!editorRef.current) return;
+    const content = editorRef.current.getProjectData(); 
+
+    await fetch('/api/file/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        filepath,
+        content: JSON.stringify(content),
+        name: filepath?.split('/').pop(),
+        Project: filepath?.split('/')[0],
+        owner_id: session?.user?.id,
+      }),
+    });
+  };
 
   useEffect(() => {
     // Initialize socket connection
@@ -53,7 +70,7 @@ export default function App() {
       console.log('Socket connected:', socket.id);
       socketRef.current = socket;
       // Join the editor room after connection
-      socket.emit('join-editor', params.editorId);
+      socket.emit('join-editor', filepath);
     });
 
     socket.on('connect_error', (error) => {
@@ -77,7 +94,7 @@ export default function App() {
         socket.disconnect();
       }
     };
-  }, [params.editorId]);
+  }, [filepath]);
 
   if (status === "loading") {
     return <p>Loading editor...</p>;
@@ -88,11 +105,11 @@ export default function App() {
   }
 
   const userId = String(session.user.id); 
-  const editorIdFromUrl = String(params.editorId);
+  // const editorIdFromUrl = String(params.editorId);
 
-  if (!editorIdFromUrl || editorIdFromUrl === "undefined" || editorIdFromUrl === "null") {
-    return <p>Error: Project ID from URL is invalid. Value: '{editorIdFromUrl}'</p>;
-  }
+  // if (!editorIdFromUrl || editorIdFromUrl === "undefined" || editorIdFromUrl === "null") {
+  //   return <p>Error: Project ID from URL is invalid. Value: '{editorIdFromUrl}'</p>;
+  // }
 
   return (
     <div style={{ height: '100vh', width: '100%' }}>
@@ -101,7 +118,7 @@ export default function App() {
           licenseKey: 'DEMO_LOCALHOST_KEY',
           project: {
             type: 'web',
-            id: editorIdFromUrl
+            id: filepath
           },
           identity: {
             id: userId
@@ -117,7 +134,7 @@ export default function App() {
           editorRef.current = editor;
 
           // Load initial data from server
-          fetch(`/api/editor/${editorIdFromUrl}`)
+          fetch(`/api/editor/${filepath}`)
             .then(res => res.json())
             .then(data => {
               if (data.editor?.projectData) {
@@ -140,7 +157,7 @@ export default function App() {
             if (socketRef.current?.connected) {
               console.log('Broadcasting changes to other users');
               socketRef.current.emit('editor-change', {
-                editorId: editorIdFromUrl,
+                editorId: filepath,
                 changes: projectData
               });
             }

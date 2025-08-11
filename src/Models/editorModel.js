@@ -2,14 +2,13 @@ import mongoose from "mongoose";
 
 const editorSchema = new mongoose.Schema(
   {
-    editorId: {
+    filepath: {
       type: String,
       required: true,
       unique: true
     },
     projectData: {
-      type: Object,
-      required: true
+      type: mongoose.Schema.Types.Mixed
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,

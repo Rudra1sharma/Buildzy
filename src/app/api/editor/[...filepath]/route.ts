@@ -2,18 +2,24 @@ import { connect } from "@/dbConfig/dbConfig";
 import Editor from "@/Models/editorModel";
 import { NextRequest, NextResponse } from "next/server";
 
+// Helper to get filepath from params
+function getFilepath(request: NextRequest) {
+  const parts = request.nextUrl.pathname.split('/').slice(3);
+  return parts.join('/');
+}
+
 // GET editor data
 export async function GET(request: NextRequest) {
   try {
     await connect();
-    const editorId = request.nextUrl.pathname.split('/').pop();
+    const filepath = getFilepath(request);
     
-    if (!editorId) {
-      return NextResponse.json({ error: "Editor ID is required" }, { status: 400 });
+    if (!filepath) {
+      return NextResponse.json({ error: "Filepath is required" }, { status: 400 });
     }
 
-    const editor = await Editor.findOne({ editorId });
-    
+    const editor = await Editor.findOne({ filepath });
+
     if (!editor) {
       return NextResponse.json({ error: "Editor not found" }, { status: 404 });
     }
@@ -29,30 +35,32 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     await connect();
-    const editorId = request.nextUrl.pathname.split('/').pop();
+    const filepath = getFilepath(request);
+    // console.log('Filepath:', filepath);
+    // console.log('Request:', request);
     const { projectData, userId } = await request.json();
 
-    if (!editorId || !projectData || !userId) {
+    if (!filepath || !projectData || !userId) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    let editor = await Editor.findOne({ editorId });
+    let editor = await Editor.findOne({ filepath });
 
     if (!editor) {
       // Create new editor if it doesn't exist
       editor = await Editor.create({
-        editorId,
+        filepath,
         projectData,
         owner: userId,
         collaborators: [userId]
       });
-      console.log("Created new editor:", editorId);
+      console.log("Created new editor:", filepath);
     } else {
       // Update existing editor
       editor.projectData = projectData;
       editor.lastModified = new Date();
       await editor.save();
-      console.log("Updated existing editor:", editorId);
+      console.log("Updated existing editor:", filepath);
     }
 
     return NextResponse.json({ editor });
@@ -66,10 +74,10 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     await connect();
-    const editorId = request.nextUrl.pathname.split('/').pop();
+    const filepath = getFilepath(request);
     const { userId } = await request.json();
 
-    const editor = await Editor.findOne({ editorId });
+    const editor = await Editor.findOne({ filepath });
     if (!editor) {
       return NextResponse.json({ error: "Editor not found" }, { status: 404 });
     }

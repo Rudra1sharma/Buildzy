@@ -88,6 +88,7 @@ export default function RepoManager() {
       });
       const files = await res.json();
       const myfiles = files.map((file: any) => {
+        console.log(file, "File in fetchRepoFiles");
         const extension = file.name.split('.').pop();
         return {
           name: file.name,
