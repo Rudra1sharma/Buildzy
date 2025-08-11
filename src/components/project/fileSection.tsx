@@ -1,7 +1,7 @@
 'use client'
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { 
+import {
   FileText,
   FileCode,
   File,
@@ -11,7 +11,7 @@ import {
   FolderOpen
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-
+import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -22,7 +22,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import {Spinner} from "@/components/ui/spinner";
+import { Spinner } from "@/components/ui/spinner";
 
 interface FilesSectionProps {
   repoName: string;
@@ -51,7 +51,9 @@ export default function FilesSection({
   handleCreateFile,
   isCreatingFile
 }: FilesSectionProps) {
-  
+
+  console.log(files, "Files in FilesSection");
+  const router = useRouter();
   return (
     <Card className="lg:col-span-1">
       <CardHeader>
@@ -91,7 +93,12 @@ export default function FilesSection({
                     <span className="truncate">{file.name}</span>
                   </div>
                   <div className="flex items-center text-sm text-muted-foreground">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 flex-shrink-0"
+                      onClick={() => router.push(`/editor/${repoName}/${file.name}`)}
+                    >
                       <Pencil className="h-4 w-4" />
                     </Button>
                   </div>
