@@ -116,20 +116,16 @@ export default function App() {
       <StudioEditor
         options={{
           licenseKey: 'DEMO_LOCALHOST_KEY',
+          storageManager: { type: 'none' },
           project: {
             type: 'web',
-            id: filepath
+            id: filepath,
           },
           identity: {
             id: userId
-          },
-          storage: {
-            type: 'browser',
-            autosaveChanges: 1,
-            autosaveIntervalMs: 10000
           }
         }}
-        onEditor={(editor) => {
+        onEditor={(editor: any) => {
           // Store editor instance in ref
           editorRef.current = editor;
 

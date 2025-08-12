@@ -343,6 +343,7 @@ export default function RepoManager() {
   };
   const createFileInRepo = async (access_token: any, username: any, repoName: string, filePath: string, content: string, message: string) => {
     try {
+      console.log(access_token, username, repoName, filePath, content, message)
       const response = await fetch(`https://api.github.com/repos/${username}/${repoName}/contents/${filePath}`, {
         method: 'PUT',
         headers: {
@@ -357,6 +358,7 @@ export default function RepoManager() {
       });
 
       if (!response.ok) {
+        console.log(response)
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to create file');
       }
