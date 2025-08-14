@@ -7,6 +7,7 @@ import FilesSection from '@/components/project/fileSection';
 import ProjectManagementSection from '@/components/project/projectManagement';
 import DashboardHeader from '@/components/dashboard/dashboardHeader';
 import { Spinner } from '@/components/ui/spinner';
+import { useRouter } from 'next/navigation';
 interface FilesType {
   name: string;
   path: string;
@@ -29,11 +30,19 @@ interface NewFileType {
 }
 
 export default function RepoManager() {
+
+  const { data: session, status } = useSession();
+  const router = useRouter()
+  useEffect(() => {
+    if (status === "loading") return;
+    if (!session) {
+      router.push("/login");
+    }
+  }, [session, status, router]);
   const query = useSearchParams();
   const repoName = query.get("name") as string;
   const projectId = query.get("refrence") as string;
   const owner = query.get("owner") as string;
-  const { data: session, status } = useSession();
   const [files, setFiles] = useState<FilesType[]>([]);
   const [temp, setTemp] = useState(repoName);
   const [pageName, setPageName] = useState("");
@@ -234,7 +243,7 @@ export default function RepoManager() {
         owner_id: session?.user?.id || "unknown",
       };
 
-      const ress = await axios.post('http://localhost:3000/api/project/createrepo', payload);
+      const ress = await axios.post('${process.env.NEXT_PUBLIC_API_BASE}/api/project/createrepo', payload);
       console.log(ress)
     } catch (error: any) {
       console.error("Error creating repo or saving project:", error.message);
@@ -262,7 +271,7 @@ export default function RepoManager() {
     setIsInviting(true);
     try {
       //! put the github call to the backend part for atomicity transaction
-      const response = await axios.post("http://localhost:3000/api/invitation/sendInvite", { collaboratorEmail: inviteEmail, projectId: projectId })
+      const response = await axios.post("${process.env.NEXT_PUBLIC_API_BASE}/api/invitation/sendInvite", { collaboratorEmail: inviteEmail, projectId: projectId })
       const invitedUsername = response.data.username
       if (response && response.status === 202) {
         alert(response.data.message)

@@ -51,7 +51,7 @@ export default function ProjectsPage() {
         const gitid = session?.user?.username
         setLoading(true)
         try {
-            const res = await fetch(`http://localhost:3000/api/project/getrepo?userId=${userid}&gitid=${gitid}`)
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/project/getrepo?userId=${userid}&gitid=${gitid}`)
             const data = await res.json();
             const proj = data.map((project: any) => ({
                 ...project,
@@ -127,7 +127,7 @@ export default function ProjectsPage() {
                 owner_id: session?.user?.id || "unknown",
             };
 
-            await axios.post('http://localhost:3000/api/project/createrepo', payload);
+            await axios.post('${process.env.NEXT_PUBLIC_API_BASE}/api/project/createrepo', payload);
             setIsDialogOpen(false)
         } catch (error: any) {
             console.error("Error creating repo or saving project:", error.message);
