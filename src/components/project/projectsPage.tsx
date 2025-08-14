@@ -23,6 +23,7 @@ interface ProjectProps {
     mongoId: string;
     id: string;
     name: string;
+    owner:string;
     description: string;
     repo: string;
     members: number;
@@ -56,7 +57,6 @@ export default function ProjectsPage() {
                 ...project,
                 techStack: ['HTML5', 'CSS', 'Javascript']
             }))
-            console.log(proj)
             setProject(proj)
         } catch (error) {
             console.error(error)
@@ -127,7 +127,7 @@ export default function ProjectsPage() {
                 owner_id: session?.user?.id || "unknown",
             };
 
-            const ress = await axios.post('http://localhost:3000/api/project/createrepo', payload);
+            await axios.post('http://localhost:3000/api/project/createrepo', payload);
             setIsDialogOpen(false)
         } catch (error: any) {
             console.error("Error creating repo or saving project:", error.message);
@@ -224,7 +224,7 @@ export default function ProjectsPage() {
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.97 }}
                                 transition={{ type: 'spring', stiffness: 250 }}
-                                onClick={() => router.push(`/projects/${project.id}`)}
+                                onClick={() => router.push(`/projects/${project.id}?name=${project.name}&refrence=${project.mongoId}&owner=${project.owner}`)}
                             >
                                 <Card className="relative p-6 bg-gradient-to-br from-purple-100 via-blue-100 to-pink-100 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 shadow-xl rounded-2xl hover:shadow-2xl transition-shadow min-h-[240px] flex flex-col justify-between">
                                     <div className="absolute top-4 right-4 flex items-center gap-2">
@@ -255,7 +255,7 @@ export default function ProjectsPage() {
                                             className="text-sm dark:border-gray-500 dark:text-white dark:hover:bg-gray-700"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                router.push(`/projects/${project.id}?name=${project.name}&refrence=${project.mongoId}`);
+                                                router.push(`/projects/${project.id}?name=${project.name}&refrence=${project.mongoId}&owner=${project.owner}`);
                                             }}
                                         >
                                             View Details

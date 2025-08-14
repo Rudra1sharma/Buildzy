@@ -7,6 +7,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useRef, useCallback, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
 import debounce from 'lodash/debounce';
+import { Github } from 'lucide-react';
 
 export default function App() {
     const params = useParams();
@@ -18,7 +19,7 @@ export default function App() {
 
     const filepath = Array.isArray(params.filepath) ? params.filepath.join('/') : params.filepath;
 
-    const [project, setProject] = useState<any>(null); // null until loaded
+    const [project, setProject] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
     const debouncedSave = useCallback(
@@ -42,7 +43,6 @@ export default function App() {
         [filepath, session?.user?.id]
     );
 
-    // Load project from backend before mounting editor
     useEffect(() => {
         if (!filepath) return;
 
@@ -52,7 +52,6 @@ export default function App() {
                 if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
                 const data = await res.json();
                 setProject(data.editor?.projectData || { pages: [{ name: 'Home', component: '<h1>New project</h1>' }] });
-                // console.log(data.editor?.projectData)
             } catch (err) {
                 console.error('Error loading project:', err);
                 setProject({ pages: [{ name: 'Home', component: '<h1>New project</h1>' }] });
@@ -91,6 +90,7 @@ export default function App() {
             socket.disconnect();
         };
     }, [filepath]);
+
     if (status === 'loading' || loading) {
         return <p>Loading editor...</p>;
     }
@@ -101,47 +101,86 @@ export default function App() {
 
     const userId = String(session.user.id);
 
+    // ⬅️ New handler for saving HTML & CSS
+    const handleSaveHtmlCss = async () => {
+        if (!editorRef.current) return;
+
+        const html = editorRef.current.getHtml();
+        const css = editorRef.current.getCss();
+
+        console.log(html);
+
+        // try {
+        //     const res = await fetch(`/api/github/save-html-css`, {
+        //         method: 'POST',
+        //         headers: { 'Content-Type': 'application/json' },
+        //         body: JSON.stringify({
+        //             repo: 'your-repo-name', // ⬅️ set dynamically if needed
+        //             htmlPath: 'index.html',
+        //             cssPath: 'style.css',
+        //             htmlContent: html,
+        //             cssContent: css,
+        //             message: `Updated HTML and CSS from Buildzy`,
+        //         })
+        //     });
+
+        //     if (!res.ok) throw new Error(`GitHub save failed: ${res.status}`);
+        //     console.log('HTML & CSS saved to GitHub successfully');
+        // } catch (error) {
+        //     console.error('Error saving to GitHub:', error);
+        // }
+    };
+
     return (
-        <div style={{ height: '100vh', width: '100%' }}>
-            {project && (
-                <StudioEditor
-                    options={{
-                        storage: {
-                            type: 'self',
-                            autosaveChanges: 1,
-                            onSave: async ({project}: any) => {
-                                console.log(project);
-                                debouncedSave(project);
-                            }, 
-                            onLoad: async () => ({ project }),
-                        },
-                        storageManager: { autoload: false }, 
-                        licenseKey: 'DEMO_LOCALHOST_KEY',
-                        project: { type: 'web', id: filepath },
-                        identity: { id: userId },
-                    }}
-                    onEditor={(editor: any) => {
-                        editorRef.current = editor;
+        <div className="flex h-screen w-full flex-col relative">
+            {/* Editor area */}
+            <div className="flex-1">
+                {project && (
+                    <StudioEditor
+                        options={{
+                            storage: {
+                                type: 'self',
+                                autosaveChanges: 1,
+                                onSave: async ({ project }: any) => {
+                                    console.log(project);
+                                    debouncedSave(project);
+                                },
+                                onLoad: async () => ({ project }),
+                            },
+                            storageManager: { autoload: false },
+                            licenseKey: 'DEMO_LOCALHOST_KEY',
+                            project: { type: 'web', id: filepath },
+                            identity: { id: userId },
+                        }}
+                        onEditor={(editor: any) => {
 
-                        // Listen for local changes
-                        editor.on('change', () => {
-                            const projectData = editor.getProjectData();
-                            lastChangeRef.current = JSON.stringify(projectData);
+                            editorRef.current = editor
+                            editor.on('change', () => {
+                                const projectData = editor.getProjectData();
+                                lastChangeRef.current = JSON.stringify(projectData);
 
-                            // Save to backend
+                                if (socketRef.current?.connected) {
+                                    socketRef.current.emit('editor-change', {
+                                        editorId: filepath,
+                                        changes: projectData,
+                                    });
+                                }
+                            });
+                        }}
+                    />
+                )}
+            </div>
+            <div className="absolute bottom-2 right-3 z-[9999]">
+                <button
+                    onClick={handleSaveHtmlCss}
+                    className="bg-[#8b5cf6] hover:bg-[#a78bfa] text-white  px-2 py-2 text-pretty rounded-full flex items-center gap-2"
+                >   
+                    <span className="hidden sm:inline">Save to </span>
+                    <Github />
+                </button>
+            </div>
 
-                            // Send to other clients
-                            if (socketRef.current?.connected) {
-                                socketRef.current.emit('editor-change', {
-                                    editorId: filepath,
-                                    changes: projectData
-                                });
-                            }
-                        });
-                    }}
-                />
-            )}
         </div>
     );
-}
 
+}
