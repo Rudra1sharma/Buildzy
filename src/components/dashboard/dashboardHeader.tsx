@@ -22,7 +22,7 @@ export default function DashboardHeader() {
       <div className="container flex h-14 items-center">
         <Link href="/" className="flex items-center space-x-2 mr-6">
           <Layout className="h-6 w-6" />
-          <span className="font-bold">Builzee</span>
+          <span className="font-bold">Buildzy</span>
         </Link>
         <nav className="flex items-center space-x-6 text-sm font-medium flex-1">
           {navItems.map((item) => (

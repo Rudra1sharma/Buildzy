@@ -32,6 +32,7 @@ export default function RepoManager() {
   const query = useSearchParams();
   const repoName = query.get("name") as string;
   const projectId = query.get("refrence") as string;
+  const owner = query.get("owner") as string;
   const { data: session, status } = useSession();
   const [files, setFiles] = useState<FilesType[]>([]);
   const [temp, setTemp] = useState(repoName);
@@ -142,7 +143,7 @@ export default function RepoManager() {
   };
   const fetchCollaborators = async () => {
     try {
-      const res2 = await fetch(`https://api.github.com/repos/${session?.user?.username}/${repoName}/collaborators`, {
+      const res2 = await fetch(`https://api.github.com/repos/${owner}/${repoName}/collaborators`, {
         headers: {
           Authorization: `Bearer ${session?.user?.access_token}`,
           Accept: "application/vnd.github+json"
@@ -153,7 +154,6 @@ export default function RepoManager() {
         return { id: data.id, username: data.login, role: data.role_name, avatar_url: data.avatar_url }
       })
       setContributors(collaborators)
-      console.log(collaborators)
     } catch (error) {
       console.error(error)
     }
@@ -161,8 +161,8 @@ export default function RepoManager() {
 
   useEffect(() => {
     if (session?.user?.username && repoName && session?.user?.access_token) {
-      fetchRepoFiles(session.user.username, repoName, session.user.access_token);
-      fetchCommit(session.user.username, repoName, session.user.access_token);
+      fetchRepoFiles(owner, repoName, session.user.access_token);
+      fetchCommit(owner, repoName, session.user.access_token);
       fetchCollaborators();
     } else if (status !== "loading") {
       setIsLoading(false);

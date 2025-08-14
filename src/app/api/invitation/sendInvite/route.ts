@@ -10,7 +10,6 @@ export async function POST(req: NextRequest) {
     try {
         await connect();
         const { collaboratorEmail, projectId } = await req.json();
-        console.log(collaboratorEmail+" "+projectId);
         const res = await User.findOne({ email: collaboratorEmail });
         if (!res) {
             return NextResponse.json({ message: "Ask Collaborator to create an account on Buildzyy" }, { status: 202 })
