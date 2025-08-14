@@ -1,4 +1,4 @@
-'use client'; 
+'use client';
 
 import StudioEditor from '@grapesjs/studio-sdk/react';
 import '@grapesjs/studio-sdk/style';
@@ -7,10 +7,17 @@ import { useParams } from 'next/navigation';
 import { useEffect, useRef, useCallback } from 'react';
 import io, { Socket } from 'socket.io-client';
 import debounce from 'lodash/debounce';
+import { useRouter } from 'next/navigation';
 
 export default function App() {
-  const params = useParams();
-  const { data: session, status } = useSession();
+  const params = useParams(); const { data: session, status } = useSession();
+  const router = useRouter()
+  useEffect(() => {
+    if (status === "loading") return;
+    if (!session) {
+      router.push("/login");
+    }
+  }, [session, status, router]);
   const socketRef = useRef<Socket | null>(null);
   const editorRef = useRef<any>(null);
   const lastChangeRef = useRef<string>('');
@@ -43,7 +50,7 @@ export default function App() {
 
   const handleSave = async () => {
     if (!editorRef.current) return;
-    const content = editorRef.current.getProjectData(); 
+    const content = editorRef.current.getProjectData();
 
     await fetch('/api/file/save', {
       method: 'POST',
@@ -104,7 +111,7 @@ export default function App() {
     return <p>User not authenticated. Please log in to use the editor.</p>;
   }
 
-  const userId = String(session.user.id); 
+  const userId = String(session.user.id);
   // const editorIdFromUrl = String(params.editorId);
 
   // if (!editorIdFromUrl || editorIdFromUrl === "undefined" || editorIdFromUrl === "null") {
@@ -142,10 +149,10 @@ export default function App() {
           // Listen for changes and save them
           editor.on('change', () => {
             const projectData = editor.getProjectData();
-            
+
             // Store the current change for comparison
             lastChangeRef.current = JSON.stringify(projectData);
-            
+
             // Save to server (debounced)
             debouncedSave(projectData);
 

@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { useSession } from "next-auth/react"
 import DashboardHeader from '@/components/dashboard/dashboardHeader'
 import { Spinner } from "@/components/ui/spinner"
+import { useRouter } from "next/navigation"
 
 interface UserData {
     name: string
@@ -23,7 +24,14 @@ interface UserData {
 }
 
 export default function ProfilePage() {
-    const { data: session } = useSession()
+    const { data: session , status} = useSession()
+    const router = useRouter()
+      useEffect(() => {
+        if (status === "loading") return;
+        if (!session) {
+          router.push("/login");
+        }
+      }, [session, status, router]);
     const [isEditing, setIsEditing] = useState(false)
     const [loading, setLoading] = useState(true)
     const [userData, setUserData] = useState<UserData>({
@@ -37,6 +45,7 @@ export default function ProfilePage() {
     })
 
     useEffect(() => {
+
         setLoading(true)
         setUserData({
         name: session?.user?.name as string,

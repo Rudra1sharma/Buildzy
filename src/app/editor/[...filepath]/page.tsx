@@ -3,7 +3,7 @@
 import StudioEditor from '@grapesjs/studio-sdk/react';
 import '@grapesjs/studio-sdk/style';
 import { useSession } from 'next-auth/react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useRef, useCallback, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
 import debounce from 'lodash/debounce';
@@ -12,7 +12,13 @@ import { Github } from 'lucide-react';
 export default function App() {
     const params = useParams();
     const { data: session, status } = useSession();
-
+        const router = useRouter()
+        useEffect(() => {
+            if (status === "loading") return;
+            if (!session) {
+                router.push("/login");
+            }
+        }, [session, status, router]);
     const socketRef = useRef<Socket | null>(null);
     const editorRef = useRef<any>(null);
     const lastChangeRef = useRef<string>('');
@@ -107,28 +113,6 @@ export default function App() {
 
         const html = editorRef.current.getHtml();
         const css = editorRef.current.getCss();
-
-        console.log(html);
-
-        // try {
-        //     const res = await fetch(`/api/github/save-html-css`, {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: JSON.stringify({
-        //             repo: 'your-repo-name', // ⬅️ set dynamically if needed
-        //             htmlPath: 'index.html',
-        //             cssPath: 'style.css',
-        //             htmlContent: html,
-        //             cssContent: css,
-        //             message: `Updated HTML and CSS from Buildzy`,
-        //         })
-        //     });
-
-        //     if (!res.ok) throw new Error(`GitHub save failed: ${res.status}`);
-        //     console.log('HTML & CSS saved to GitHub successfully');
-        // } catch (error) {
-        //     console.error('Error saving to GitHub:', error);
-        // }
     };
 
     return (

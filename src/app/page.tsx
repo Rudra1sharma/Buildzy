@@ -6,28 +6,19 @@ import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { Code, Layout, Layers, Zap, Globe, ChevronRight, ArrowRight } from "lucide-react"
 import DashboardHeader from "@/components/dashboard/dashboardHeader"
-
-const useAuth = () => {
-  // Mock authentication state - replace with your actual auth logic
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-
-  // Simulate checking auth status
-  useEffect(() => {
-    // Replace with your actual auth check
-    const checkAuth = async () => {
-      // Mock auth check - replace with your actual implementation
-      const userLoggedIn = localStorage.getItem("user") !== null
-      setIsLoggedIn(userLoggedIn)
-    }
-
-    checkAuth()
-  }, [])
-
-  return { isLoggedIn }
-}
+import { useSession } from "next-auth/react";
 
 export default function HomePage() {
-  const { isLoggedIn } = useAuth()
+  const { data: session } = useSession()
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  useEffect(() => {
+    if (session) {
+      setIsLoggedIn(true)
+    } else {
+      setIsLoggedIn(false)
+    }
+  }, [session])
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -86,7 +77,7 @@ export default function HomePage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4, duration: 0.5 }}
                 >
-                  Builzee empowers everyone to create stunning, responsive websites in minutes. No coding required.
+                  Buildzy empowers everyone to create stunning, responsive websites in minutes. No coding required.
                 </motion.p>
                 <motion.div
                   className="flex flex-col sm:flex-row gap-3 pt-4"
@@ -97,18 +88,15 @@ export default function HomePage() {
                   {!isLoggedIn ? (
                     <>
                       <Button size="lg" className="group">
-                        <Link href="/signup" className="flex items-center">
+                        <Link href="/login" className="flex items-center">
                           Get Started Free
                           <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                         </Link>
                       </Button>
-                      <Button variant="outline" size="lg">
-                        <Link href="/login">Log In</Link>
-                      </Button>
                     </>
                   ) : (
                     <Button size="lg" className="group">
-                      <Link href="/dashboard" className="flex items-center">
+                      <Link href="/projects" className="flex items-center">
                         My Projects
                         <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                       </Link>
@@ -133,7 +121,7 @@ export default function HomePage() {
                           <div className="h-3 w-3 rounded-full bg-yellow-500" />
                           <div className="h-3 w-3 rounded-full bg-green-500" />
                         </div>
-                        <div className="flex-1 text-center text-xs text-muted-foreground">builzee.app</div>
+                        <div className="flex-1 text-center text-xs text-muted-foreground">Buildzy.app</div>
                       </div>
                       <div className="aspect-[16/9] bg-muted rounded-md mt-2 overflow-hidden">
                         <img
@@ -289,7 +277,7 @@ export default function HomePage() {
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">How Builzee Works</h2>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">How Buildzy Works</h2>
               <p className="mt-4 text-muted-foreground md:text-xl max-w-3xl mx-auto">
                 Create and launch your website in three simple steps
               </p>
@@ -309,8 +297,9 @@ export default function HomePage() {
                 },
                 {
                   step: "03",
-                  title: "Publish your website",
-                  description: "Launch your website with one click and share it with the world.",
+                  title: "Send Your Website to the Cloud",
+                  description: "Push your project to GitHub and share it with the world—friends, or anyone with a link."
+
                 },
               ].map((item, index) => (
                 <motion.div
@@ -351,30 +340,31 @@ export default function HomePage() {
                 Loved by creators worldwide
               </h2>
               <p className="mt-4 text-muted-foreground md:text-xl max-w-3xl mx-auto">
-                See what our users are saying about their experience with Builzee
+                See what our users are saying about their experience with Buildzy
               </p>
             </motion.div>
 
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {[
                 {
-                  name: "Emma Rodriguez",
-                  role: "Small Business Owner",
+                  name: "Kritarth Gupta",
+                  role: "Website Developer & Designer",
                   quote:
-                    "Builzee made creating my business website so easy. I had no technical experience but was able to launch a professional site in just one afternoon!",
+                    "As a designer, I used to spend hours repeating the same tasks. Buildzy changed that. Now I can create stunning websites faster, save time, and focus on the creative parts I love.",
                 },
                 {
-                  name: "David Chen",
-                  role: "Freelance Photographer",
+                  name: "Sahil Sharma",
+                  role: "Content Creator",
                   quote:
-                    "The templates are beautiful and the customization options are exactly what I needed to showcase my portfolio. Clients love my new website.",
+                    "I wanted a place to showcase my videos and blogs without getting lost in tech setup. Buildy made it effortless—my site looks as creative as my content.",
                 },
                 {
-                  name: "Sarah Johnson",
-                  role: "Non-profit Director",
+                  name: "Rudra Shrivastava",
+                  role: "Big Business Owner",
                   quote:
-                    "Our organization needed a website quickly for an upcoming fundraiser. Builzee not only made it possible, but the site looked amazing!",
-                },
+                    "Running a business means wearing many hats. With Buildzy, I launched a professional website in a single afternoon—no stress, no coding, just results.",
+                }
+
               ].map((testimonial, index) => (
                 <motion.div
                   key={index}
@@ -432,7 +422,7 @@ export default function HomePage() {
                 Ready to build your website?
               </h2>
               <p className="text-muted-foreground md:text-xl">
-                Join thousands of creators who are building amazing websites with Builzee.
+                Join thousands of creators who are building amazing websites with Buildzy.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 {!isLoggedIn ? (
@@ -449,8 +439,8 @@ export default function HomePage() {
                   </>
                 ) : (
                   <Button size="lg" className="group">
-                    <Link href="/dashboard/new" className="flex items-center">
-                      Create New Website
+                    <Link href="/projects" className="flex items-center">
+                      Create New Web Page
                       <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                   </Button>
@@ -466,7 +456,7 @@ export default function HomePage() {
         <div className="container px-4 md:px-6 py-8 md:py-12">
           <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
             <div>
-              <h3 className="text-lg font-medium mb-4">Builzee</h3>
+              <h3 className="text-lg font-medium mb-4">Buildzy</h3>
               <ul className="space-y-2">
                 <li>
                   <Link href="#" className="text-sm text-muted-foreground hover:text-foreground">
@@ -567,7 +557,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="flex flex-col sm:flex-row justify-between items-center mt-8 pt-8 border-t">
-            <p className="text-sm text-muted-foreground">© 2023 Builzee. All rights reserved.</p>
+            <p className="text-sm text-muted-foreground">© 2023 Buildzy. All rights reserved.</p>
             <div className="flex items-center space-x-4 mt-4 sm:mt-0">
               <Link href="#" className="text-muted-foreground hover:text-foreground">
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
