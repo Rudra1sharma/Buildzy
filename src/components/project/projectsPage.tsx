@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiPlus, FiUsers, FiStar } from 'react-icons/fi';
 import {
-    SiReact, SiTailwindcss, SiSocketdotio, SiMongodb, SiCss3, SiJavascript, SiHtml5
+    SiCss3, SiJavascript, SiHtml5
 } from 'react-icons/si';
 import { useState, useEffect } from 'react';
 import { Spinner } from '../ui/spinner';
@@ -127,7 +127,7 @@ export default function ProjectsPage() {
                 owner_id: session?.user?.id || "unknown",
             };
 
-            await axios.post('${process.env.NEXT_PUBLIC_API_BASE}/api/project/createrepo', payload);
+            await axios.post(`${process.env.NEXT_PUBLIC_API_BASE}/api/project/createrepo`, payload);
             setIsDialogOpen(false)
         } catch (error: any) {
             console.error("Error creating repo or saving project:", error.message);

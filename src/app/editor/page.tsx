@@ -25,7 +25,7 @@ export default function App() {
   const debouncedSave = useCallback(
     debounce(async (projectData: any) => {
       try {
-        const response = await fetch(`/api/editor/${filepath}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/editor/${filepath}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -86,7 +86,7 @@ export default function App() {
 
     // Listen for editor updates from other users
     socket.on('editor-update', (changes: any) => {
-      console.log('Received changes from other user');
+      // console.log('Received changes from other user');
       if (editorRef.current) {
         // Prevent applying our own changes back to us
         const changeString = JSON.stringify(changes);
@@ -112,11 +112,6 @@ export default function App() {
   }
 
   const userId = String(session.user.id);
-  // const editorIdFromUrl = String(params.editorId);
-
-  // if (!editorIdFromUrl || editorIdFromUrl === "undefined" || editorIdFromUrl === "null") {
-  //   return <p>Error: Project ID from URL is invalid. Value: '{editorIdFromUrl}'</p>;
-  // }
 
   return (
     <div style={{ height: '100vh', width: '100%' }}>
