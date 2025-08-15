@@ -31,7 +31,7 @@ export default function App() {
     const debouncedSave = useCallback(
         debounce(async (projectData: any) => {
             try {
-                const response = await fetch(`/api/editor/${filepath}`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/editor/${filepath}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -54,7 +54,7 @@ export default function App() {
 
         const loadProject = async () => {
             try {
-                const res = await fetch(`/api/editor/${filepath}`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/editor/${filepath}`);
                 if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
                 const data = await res.json();
                 setProject(data.editor?.projectData || { pages: [{ name: 'Home', component: '<h1>New project</h1>' }] });

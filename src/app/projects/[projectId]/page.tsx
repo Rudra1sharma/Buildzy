@@ -243,7 +243,7 @@ export default function RepoManager() {
         owner_id: session?.user?.id || "unknown",
       };
 
-      const ress = await axios.post('${process.env.NEXT_PUBLIC_API_BASE}/api/project/createrepo', payload);
+      const ress = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE}/api/project/createrepo`, payload);
       console.log(ress)
     } catch (error: any) {
       console.error("Error creating repo or saving project:", error.message);
@@ -271,7 +271,7 @@ export default function RepoManager() {
     setIsInviting(true);
     try {
       //! put the github call to the backend part for atomicity transaction
-      const response = await axios.post("${process.env.NEXT_PUBLIC_API_BASE}/api/invitation/sendInvite", { collaboratorEmail: inviteEmail, projectId: projectId })
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE}/api/invitation/sendInvite`, { collaboratorEmail: inviteEmail, projectId: projectId })
       const invitedUsername = response.data.username
       if (response && response.status === 202) {
         alert(response.data.message)
