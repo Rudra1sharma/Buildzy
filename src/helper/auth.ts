@@ -16,13 +16,11 @@ export const authConfig: NextAuthOptions = {
             clientId: process.env.GITHUB_CLIENT_ID as string,
             clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
             authorization: {
-                params: {
-                    redirect_uri: `${process.env.NEXTAUTH_URL}/api/auth/callback/github`,
-                    scope: 'repo,user',
+                params:{
+                    scope:"repo,user"
                 },
             },
             profile(profile) {
-                // console.log(profile)
                 return {
                   id: profile.id,
                   name: profile.name || profile.login,
