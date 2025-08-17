@@ -132,7 +132,7 @@ export default function App() {
                                 onLoad: async () => ({ project }),
                             },
                             storageManager: { autoload: false },
-                            licenseKey: 'DEMO_LOCALHOST_KEY',
+                            licenseKey: 'b87860fe418b4ffca1c2e9eb964aacd482258fd7bb66446fa917348d9e234c82',
                             project: { type: 'web', id: filepath },
                             identity: { id: userId },
                         }}
